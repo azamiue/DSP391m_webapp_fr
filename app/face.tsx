@@ -37,8 +37,8 @@ export function FaceDetect() {
       const MODEL_URL = publicDir + "/models";
       await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
       await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-      await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-      await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+      // await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+      // await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
       setValue("ModelsLoaded", true);
     };
     loadModels();

@@ -37,6 +37,17 @@ export default function AuthenPage() {
   const isFinish = useWatch({ control, name: "isFinish" });
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const email = searchParams.get("email");
+
+    if (!email) {
+      return;
+    }
+
+    setValue("email", email);
+  }, []);
+
+  useEffect(() => {
     if (success && !isFinish) {
       toast.success("Email is valid!", {
         position: "top-right",
@@ -79,7 +90,7 @@ export default function AuthenPage() {
       });
       setValue("fail", false);
     }
-  }, [success, fail, isFinish]);
+  }, [success, fail, isFinish, setValue]);
 
   return (
     <section>

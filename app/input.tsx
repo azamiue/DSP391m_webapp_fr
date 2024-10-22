@@ -11,7 +11,7 @@ export function InputValid() {
 
   const handleClick = async () => {
     setValue("loading", true);
-    setValue("success", true);
+    // setValue("success", true);
 
     try {
       // Make the API request using fetch
@@ -28,6 +28,7 @@ export function InputValid() {
       }
 
       const data = await response.json();
+      console.log("data", data);
 
       if (!data) {
         return;
