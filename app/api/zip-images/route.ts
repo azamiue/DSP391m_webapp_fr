@@ -16,8 +16,8 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const zipsDir = path.join(process.cwd(), "app", "src", "zips");
-    const picsDir = path.join(process.cwd(), "app", "src", "pics", name);
+    const zipsDir = path.join("/tmp", "zips");
+    const picsDir = path.join("/tmp", "pics", name);
     await mkdir(zipsDir, { recursive: true });
     const zipFilePath = path.join(zipsDir, `${name}.zip`);
 

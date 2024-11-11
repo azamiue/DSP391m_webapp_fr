@@ -18,20 +18,25 @@ export async function POST(request: Request) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const picsDir = join(process.cwd(), "app", "src", "pics", name);
-    await mkdir(picsDir, { recursive: true }); // Create the directory if it doesn't exist
+    // Use /tmp directory instead of project directory
+    const picsDir = join("/tmp", "pics", name);
+    await mkdir(picsDir, { recursive: true });
 
-    // Save the file in the email-specific directory
     const filename = image.name;
     const filepath = join(picsDir, filename);
     await writeFile(filepath, new Uint8Array(buffer));
 
     // Return success response with the file path
-    return NextResponse.json({ success: true, filename, name });
+    return NextResponse.json({
+      success: true,
+      filename,
+      name,
+      filepath: filepath,
+    });
   } catch (error) {
     console.error("Error saving image:", error);
     return NextResponse.json(
-      { error: "Failed to save image" },
+      { error: "Failed to save image", details: (error as Error).message },
       { status: 500 }
     );
   }

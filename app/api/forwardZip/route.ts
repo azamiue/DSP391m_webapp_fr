@@ -18,13 +18,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const filePath = path.join(
-      process.cwd(),
-      "app",
-      "src",
-      "zips",
-      `${fileName}.zip`
-    );
+    // Use /tmp directory instead of process.cwd()
+    const filePath = path.join("/tmp", "zips", `${fileName}.zip`);
 
     // Check if file exists
     try {

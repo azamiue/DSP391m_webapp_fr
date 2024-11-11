@@ -341,8 +341,8 @@ export function FaceDetect() {
 
               if (downCount === 50) {
                 setValue("lookingFor", "Done capturing all images");
-                zipImage();
-                setValue("zipPath", "app/src/zips");
+                await zipImage();
+                setValue("zipPath", "/tmp/zips");
               }
             } else if (downCount === 50) {
               console.log("Done capturing all images");
