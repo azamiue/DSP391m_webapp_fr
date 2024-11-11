@@ -283,6 +283,7 @@ export function FaceDetect() {
 
               if (event) {
                 leftCount++;
+                console.log("leftCount", leftCount);
               }
 
               if (leftCount === 50) {
