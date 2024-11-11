@@ -1,10 +1,9 @@
 "use client";
 
 import * as faceapi from "face-api.js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuthenticatorSchema } from "./type";
 import { useFormContext, useWatch } from "react-hook-form";
-import path from "path";
 import { convertNameEmail } from "@/config/name";
 
 export function FaceDetect() {
@@ -22,12 +21,6 @@ export function FaceDetect() {
   const captureDebounceTime = 50;
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  let straightCount = 0;
-  let leftCount = 0;
-  let rightCount = 0;
-  let upCount = 0;
-  let downCount = 0;
 
   const publicDir = process.env.NEXT_PUBLIC_PUBLIC_URL;
 
@@ -219,6 +212,12 @@ export function FaceDetect() {
     };
   }, [isModelsLoaded, isDone]);
 
+  let straightCount = 0;
+  let leftCount = 0;
+  let rightCount = 0;
+  let upCount = 0;
+  let downCount = 0;
+
   // Modify handleVideoPlay to check counts accurately
   const handleVideoPlay = async () => {
     if (videoRef.current && canvasRef.current) {
@@ -249,7 +248,7 @@ export function FaceDetect() {
 
           if (resizedDetections.length > 0) {
             faceapi.draw.drawDetections(canvas, resizedDetections);
-            faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+            // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
 
             const pose = calculateFacePose(resizedDetections[0].landmarks);
             const direction = getFaceDirection(pose);
@@ -349,13 +348,13 @@ export function FaceDetect() {
               console.log("Done capturing all images");
             }
 
-            context.fillStyle = "white";
-            context.font = "16px Arial";
-            context.fillText(
-              `Yaw: ${pose.yaw.toFixed(1)} Pitch: ${pose.pitch.toFixed(1)}`,
-              10,
-              20
-            );
+            // context.fillStyle = "white";
+            // context.font = "16px Arial";
+            // context.fillText(
+            //   `Yaw: ${pose.yaw.toFixed(1)} Pitch: ${pose.pitch.toFixed(1)}`,
+            //   10,
+            //   20
+            // );
           } else {
             setValue("faceDirection", "No face detected");
           }
@@ -365,37 +364,39 @@ export function FaceDetect() {
   };
 
   return (
-    <div style={{ position: "relative" }}>
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        onPlay={handleVideoPlay}
-        width="720"
-        height="560"
-        style={{ position: "absolute", top: 0, left: 0 }}
-      />
-      <canvas
-        ref={canvasRef}
-        width="720"
-        height="560"
-        style={{ position: "absolute", top: 0, left: 0 }}
-      />
+    <div className="flex flex-col gap-y-3">
+      <div className="text-center">
+        <h2 className="text-2xl">
+          Look at the camera and follow the instructions
+        </h2>
+        {faceDirection === lookingFor ? (
+          <h1 className="text-xl">Stay Out! Good Job!</h1>
+        ) : (
+          <h1 className="text-xl">Turn to: {lookingFor}</h1>
+        )}
+      </div>
       <div
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          background: "rgba(0,0,0,0.7)",
-          color: "white",
-          padding: "20px",
-          borderRadius: "5px",
-          fontSize: "24px",
-          fontWeight: "bold",
-        }}
+        className={`relative rounded-2xl  ${
+          faceDirection === lookingFor
+            ? "shadow-2xl shadow-green-500/50"
+            : "shadow-2xl shadow-red-500/50"
+        }`}
       >
-        <div>Your current pose: {faceDirection}</div>
-        <div>Looking For: {lookingFor}</div>
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          onPlay={handleVideoPlay}
+          width="720"
+          height="560"
+          className="rounded-2xl"
+        />
+        <canvas
+          ref={canvasRef}
+          width="720"
+          height="560"
+          style={{ position: "absolute", top: 0, left: 0 }}
+        />
       </div>
     </div>
   );

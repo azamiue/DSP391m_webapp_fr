@@ -32,33 +32,31 @@ export function Submit() {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center gap-y-10">
-      <h1 className="text-3xl">Checking Your Information</h1>
+    <section className="flex flex-col gap-y-10">
+      <div className="gap-y-2">
+        <h1 className="text-2xl">Checking Your Information</h1>
+        <h2 className="text-sm">
+          Please validate your information and submit!
+        </h2>
+      </div>
       <div className="w-[500px] h-[500px] flex flex-col gap-y-3">
+        <Input type="email" label="Email" value={email} disabled />
         <Input
-          type="email"
-          variant="underlined"
-          label="Email"
-          value={email}
-          disabled
-        />
-        <Input
-          type="text"
-          variant="underlined"
+          type="name"
           label="Full Name"
           value={name}
           onChange={(e) => setValue("name", e.target.value)}
         />
         <Input
-          type="text"
-          variant="underlined"
-          label="Your Organization"
+          type="name"
+          label="Your Orgnization"
           className="mb-3"
           value={organization}
           onChange={(e) => setValue("organization", e.target.value)}
         />
-        <Button color="primary" onClick={handleSubmit} isLoading={loading}>
-          Submit
+
+        <Button color="primary" isLoading={loading} onClick={handleSubmit}>
+          {loading ? "Submiting..." : "Submit"}
         </Button>
       </div>
     </section>

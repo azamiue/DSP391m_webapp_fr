@@ -93,13 +93,13 @@ export default function AuthenPage() {
   }, [success, fail, isFinish, setValue]);
 
   return (
-    <section>
+    <section className="w-full h-full flex justify-center items-center">
       {!faceStep && (
-        <div>
+        <div className="border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
           {!success && (
             <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
               <div className="inline-block max-w-xl text-center justify-center">
-                <span className={title({ color: "pink" })}>
+                <span className={title({ color: "violet", size: "sm" })}>
                   Authentication&nbsp;
                 </span>
               </div>
@@ -122,13 +122,17 @@ export default function AuthenPage() {
 
       {faceStep && !isDone && (
         <FormProvider {...methods}>
-          <FaceDetect />
+          <div className="border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
+            <FaceDetect />
+          </div>
         </FormProvider>
       )}
 
       {isDone && !isFinish && (
         <FormProvider {...methods}>
-          <Submit />
+          <div className="border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
+            <Submit />
+          </div>
         </FormProvider>
       )}
 
