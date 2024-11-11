@@ -212,29 +212,58 @@ export function FaceDetect() {
     };
   }, [isModelsLoaded, isDone]);
 
-  let straightCount = 0;
-  let leftCount = 0;
-  let rightCount = 0;
-  let upCount = 0;
-  let downCount = 0;
-
   // Modify handleVideoPlay to check counts accurately
-  const handleVideoPlay = async () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const displaySize = { width: video.width, height: video.height };
-      faceapi.matchDimensions(canvas, displaySize);
+  type Direction = "Straight" | "Left" | "Right" | "Up" | "Down";
+  type DirectionLower = "straight" | "left" | "right" | "up" | "down";
 
-      setInterval(async () => {
+  type Counts = {
+    [K in DirectionLower]: number;
+  };
+
+  const handleVideoPlay = async () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const displaySize = { width: video.width, height: video.height };
+    faceapi.matchDimensions(canvas, displaySize);
+
+    // Initialize state object to track counts
+    const counts: Counts = {
+      straight: 0,
+      left: 0,
+      right: 0,
+      up: 0,
+      down: 0,
+    };
+
+    // Define the sequence of directions and required counts
+    const captureSequence: Array<{ direction: Direction; target: number }> = [
+      { direction: "Straight", target: 50 },
+      { direction: "Left", target: 50 },
+      { direction: "Right", target: 50 },
+      { direction: "Up", target: 50 },
+      { direction: "Down", target: 50 },
+    ];
+
+    let currentStageIndex = 0;
+
+    // Helper function to convert Direction to DirectionLower
+    const toLowerDirection = (dir: Direction): DirectionLower => {
+      return dir.toLowerCase() as DirectionLower;
+    };
+
+    // Store interval ID for cleanup
+    const intervalId = setInterval(async () => {
+      try {
         const detections = await faceapi
           .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
           .withFaceLandmarks();
 
-        // Ensure only one face is detected
+        // Handle multiple faces
         if (detections.length >= 2) {
           setValue("faceDirection", "Multiple faces detected");
-          return; // Skip further processing if more than one face is detected
+          return;
         }
 
         const resizedDetections = faceapi.resizeResults(
@@ -242,126 +271,69 @@ export function FaceDetect() {
           displaySize
         );
         const context = canvas.getContext("2d");
+        if (!context) return;
 
-        if (context) {
-          context.clearRect(0, 0, canvas.width, canvas.height);
+        // Clear previous drawings
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-          if (resizedDetections.length > 0) {
-            faceapi.draw.drawDetections(canvas, resizedDetections);
-            // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+        if (resizedDetections.length === 0) {
+          setValue("faceDirection", "No face detected");
+          return;
+        }
 
-            const pose = calculateFacePose(resizedDetections[0].landmarks);
-            const direction = getFaceDirection(pose);
-            setValue("faceDirection", direction);
+        // Draw detections
+        faceapi.draw.drawDetections(canvas, resizedDetections);
 
-            const boundingBox = resizedDetections[0].detection.box;
+        // Get current face direction
+        const pose = calculateFacePose(resizedDetections[0].landmarks);
+        const currentDirection = getFaceDirection(pose) as Direction;
+        setValue("faceDirection", currentDirection);
 
-            if (straightCount < 50 && direction === "Straight") {
-              const event = await captureAndSaveFrameFromVideo(
-                boundingBox,
-                straightCount,
-                direction
-              );
+        // Get current stage requirements
+        const currentStage = captureSequence[currentStageIndex];
+        if (!currentStage) {
+          // All stages complete
+          clearInterval(intervalId);
+          setValue("lookingFor", "Done capturing all images");
+          await zipImage();
+          setValue("zipPath", "/tmp/zips");
+          return;
+        }
 
-              if (event) {
-                straightCount++;
-              }
+        // Update UI to show what we're looking for
+        setValue("lookingFor", currentStage.direction);
 
-              if (straightCount === 50) {
-                setValue("lookingFor", "Left");
-              }
-            } else if (
-              straightCount === 50 &&
-              leftCount < 50 &&
-              direction === "Left"
-            ) {
-              const event = await captureAndSaveFrameFromVideo(
-                boundingBox,
-                leftCount,
-                direction
-              );
+        // If current direction matches what we're looking for
+        if (currentDirection === currentStage.direction) {
+          const directionKey = toLowerDirection(currentStage.direction);
+          const boundingBox = resizedDetections[0].detection.box;
 
-              if (event) {
-                leftCount++;
-                console.log("leftCount", leftCount);
-              }
+          // Attempt to capture frame
+          const event = await captureAndSaveFrameFromVideo(
+            boundingBox,
+            counts[directionKey],
+            currentStage.direction
+          );
 
-              if (leftCount === 50) {
-                setValue("lookingFor", "Right");
-              }
-            } else if (
-              leftCount === 50 &&
-              rightCount < 50 &&
-              direction === "Right"
-            ) {
-              const event = await captureAndSaveFrameFromVideo(
-                boundingBox,
-                rightCount,
-                direction
-              );
+          if (event) {
+            counts[directionKey]++;
 
-              if (event) {
-                rightCount++;
-              }
-
-              if (rightCount === 50) {
-                setValue("lookingFor", "Up");
-              }
-            } else if (
-              rightCount === 50 &&
-              upCount < 50 &&
-              direction === "Up"
-            ) {
-              const event = await captureAndSaveFrameFromVideo(
-                boundingBox,
-                upCount,
-                direction
-              );
-
-              if (event) {
-                upCount++;
-              }
-
-              if (upCount === 50) {
-                setValue("lookingFor", "Down");
-              }
-            } else if (
-              upCount === 50 &&
-              downCount < 50 &&
-              direction === "Down"
-            ) {
-              const event = await captureAndSaveFrameFromVideo(
-                boundingBox,
-                downCount,
-                direction
-              );
-
-              if (event) {
-                downCount++;
-              }
-
-              if (downCount === 50) {
-                setValue("lookingFor", "Done capturing all images");
-                await zipImage();
-                setValue("zipPath", "/tmp/zips");
-              }
-            } else if (downCount === 50) {
-              console.log("Done capturing all images");
+            // If we've reached target count for current direction
+            if (counts[directionKey] === currentStage.target) {
+              currentStageIndex++;
             }
-
-            // context.fillStyle = "white";
-            // context.font = "16px Arial";
-            // context.fillText(
-            //   `Yaw: ${pose.yaw.toFixed(1)} Pitch: ${pose.pitch.toFixed(1)}`,
-            //   10,
-            //   20
-            // );
-          } else {
-            setValue("faceDirection", "No face detected");
           }
         }
-      }, 100);
-    }
+      } catch (error) {
+        console.error("Error in face detection:", error);
+        clearInterval(intervalId);
+      }
+    }, 100);
+
+    // Cleanup function to clear interval when component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
   };
 
   return (
