@@ -11,7 +11,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Checkbox } from "@nextui-org/checkbox";
 
 export function InformationPage() {
@@ -137,6 +137,18 @@ export function InformationPage() {
     }
   };
 
+  const handleDisable = useMemo(() => {
+    if (name?.length === 0 && organization?.length === 0) {
+      return true;
+    }
+
+    if (!name || !organization) {
+      return true;
+    }
+
+    return false;
+  }, [name, organization]);
+
   return (
     <section className="flex flex-col gap-y-10">
       <div className="gap-y-2">
@@ -193,7 +205,12 @@ export function InformationPage() {
           </Modal>
         </div>
 
-        <Button color="primary" isLoading={loading} onClick={handleSubmit}>
+        <Button
+          color="primary"
+          isLoading={loading}
+          onClick={handleSubmit}
+          isDisabled={handleDisable}
+        >
           {loading
             ? "To continue, you must allow to access your camera!"
             : "Submit"}
