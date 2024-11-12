@@ -1,7 +1,7 @@
 "use client";
 
 import * as faceapi from "face-api.js";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuthenticatorSchema } from "./type";
 import { useFormContext, useWatch } from "react-hook-form";
 import { convertNameEmail } from "@/config/name";
@@ -11,6 +11,7 @@ export function FaceDetect() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
+  const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 });
 
   const isModelsLoaded = useWatch({ control, name: "ModelsLoaded" });
   const faceDirection = useWatch({ control, name: "faceDirection" });
@@ -39,7 +40,17 @@ export function FaceDetect() {
       setValue("ModelsLoaded", true);
     };
     loadModels();
+
+    // Set video and canvas dimensions based on window size
+    const handleResize = () => {
+      setVideoDimensions({ width: window.innerWidth, height: window.innerHeight * 0.6 });
+    }
+    handleResize(); // Initialize with current size
+    window.addEventListener("resize", handleResize); // Update on resize
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
 
   // Function to calculate face pose based on landmarks
   const calculateFacePose = (landmarks: any) => {
@@ -213,6 +224,12 @@ export function FaceDetect() {
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
+    const { width, height } = videoDimensions;
+    video.width = width;
+    video.height = height;
+    canvas.width = width;
+    canvas.height = height;
+
     const displaySize = { width: video.width, height: video.height };
     faceapi.matchDimensions(canvas, displaySize);
 
@@ -270,7 +287,7 @@ export function FaceDetect() {
         }
 
         // Draw detections
-        faceapi.draw.drawDetections(canvas, resizedDetections);
+        // faceapi.draw.drawDetections(canvas, resizedDetections);
 
         // Get current face direction
         const pose = calculateFacePose(resizedDetections[0].landmarks);
@@ -388,14 +405,14 @@ export function FaceDetect() {
                 autoPlay
                 muted
                 onPlay={handleVideoPlay}
-                width="410"
-                height="308"
+                width={videoDimensions.width}
+                height={videoDimensions.height}
                 className="rounded-2xl"
               />
               <canvas
                 ref={canvasRef}
-                width="410"
-                height="308"
+                width={videoDimensions.width}
+                height={videoDimensions.height}
                 style={{ position: "absolute", top: 0, left: 0 }}
               />
             </div>
