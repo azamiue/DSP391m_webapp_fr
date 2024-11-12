@@ -321,9 +321,9 @@ export function FaceDetect() {
           Look at the camera and follow the instructions
         </h2>
         {faceDirection === lookingFor ? (
-          <h1 className="text-xl">Stay Out! Good Job!</h1>
+          <h1 className="text-xl text-green-500">Stay Out! Good Job!</h1>
         ) : (
-          <h1 className="text-xl">Turn to: {lookingFor}</h1>
+          <h1 className="text-xl text-red-500">Turn to: {lookingFor}</h1>
         )}
       </div>
       <div

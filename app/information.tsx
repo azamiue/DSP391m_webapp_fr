@@ -12,7 +12,6 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import { useMemo, useState } from "react";
-import { Checkbox } from "@nextui-org/checkbox";
 
 export function InformationPage() {
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
