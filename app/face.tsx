@@ -389,13 +389,13 @@ export function FaceDetect() {
                 muted
                 onPlay={handleVideoPlay}
                 width="380"
-                height="300"
+                height="560"
                 className="rounded-2xl"
               />
               <canvas
                 ref={canvasRef}
                 width="380"
-                height="300"
+                height="560"
                 style={{ position: "absolute", top: 0, left: 0 }}
               />
             </div>
