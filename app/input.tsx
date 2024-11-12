@@ -11,7 +11,6 @@ export function InputValid() {
 
   const handleClick = async () => {
     setValue("loading", true);
-    // setValue("success", true);
 
     try {
       // Make the API request using fetch

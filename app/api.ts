@@ -1,1 +1,1 @@
-export const authenApi = "http://127.0.0.1:5000/auth/";
+export const authenApi = "http://103.146.23.200:5500/auth/";

@@ -3,6 +3,7 @@ import { AuthenticatorSchema } from "./type";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { convertNameEmail } from "@/config/name";
+import path from "path";
 export function Submit() {
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
 
@@ -12,22 +13,35 @@ export function Submit() {
   const loading = useWatch({ control, name: "loading" });
 
   const handleSubmit = async () => {
-    const name = convertNameEmail(email);
-    setValue("loading", true);
-
     try {
-      const response = await fetch(`/api/forwardZip?fileName=${name}`, {
+      setValue("loading", true);
+
+      const name_email = convertNameEmail(email);
+
+      const response = await fetch("/api/check-folder", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name_email,
+          name,
+        }),
       });
 
-      if (response.ok) {
-        setValue("loading", false);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to check folder");
+      }
+
+      if (data.exists) {
         setValue("isFinish", true);
-      } else {
-        console.error("Error:", response.status, await response.text());
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Submission error:", error);
+    } finally {
+      setValue("loading", false);
     }
   };
 

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AuthenticatorSchema } from "./type";
 import { useFormContext, useWatch } from "react-hook-form";
 import { convertNameEmail } from "@/config/name";
+import path from "path";
 
 export function FaceDetect() {
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
@@ -14,6 +15,7 @@ export function FaceDetect() {
   const lookingFor = useWatch({ control, name: "lookingFor" });
   const email = useWatch({ control, name: "email" });
   const isDone = useWatch({ control, name: "isDone" });
+  const name = useWatch({ control, name: "name" });
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -132,11 +134,12 @@ export function FaceDetect() {
             quality: 1,
           });
 
-          const name = convertNameEmail(email);
+          const name_email = convertNameEmail(email);
 
           const formData = new FormData();
           formData.append("image", blob, `${direction}-${Date.now()}.jpg`);
           formData.append("name", name);
+          formData.append("email", name_email);
 
           const response = await fetch("/api/save-image", {
             method: "POST",
@@ -155,30 +158,6 @@ export function FaceDetect() {
       } catch (error) {
         console.error("Error capturing and saving frame from video:", error);
       }
-    }
-  };
-
-  // zip img
-  const zipImage = async () => {
-    const name = convertNameEmail(email);
-
-    const formData = new FormData();
-    formData.append("name", name);
-
-    try {
-      const response = await fetch("/api/zip-images", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setValue("isDone", true);
-      } else {
-        console.log("Failed to create zip file. Please check the server logs.");
-      }
-    } catch (error) {
-      console.error("Error zipping images:", error);
     }
   };
 
@@ -295,8 +274,7 @@ export function FaceDetect() {
           // All stages complete
           clearInterval(intervalId);
           setValue("lookingFor", "Done capturing all images");
-          await zipImage();
-          setValue("zipPath", "/tmp/zips");
+          setValue("isDone", true);
           return;
         }
 
