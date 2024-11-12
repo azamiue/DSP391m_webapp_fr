@@ -1,13 +1,15 @@
 "use client";
 
 import * as faceapi from "face-api.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AuthenticatorSchema } from "./type";
 import { useFormContext, useWatch } from "react-hook-form";
 import { convertNameEmail } from "@/config/name";
-import path from "path";
+import { useMediaQuery } from "react-responsive";
 
 export function FaceDetect() {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
 
   const isModelsLoaded = useWatch({ control, name: "ModelsLoaded" });
@@ -78,22 +80,14 @@ export function FaceDetect() {
   };
 
   // Function to determine face direction based on angles
-  const getFaceDirection = (pose: { yaw: number; pitch: number }) => {
-    const { yaw, pitch } = pose;
+  const getFaceDirection = ({ yaw, pitch }: { yaw: number; pitch: number }) => {
+    // Define directional boundaries (example fixed angle ranges)
+    if (pitch < 85 && yaw >= 0 && yaw <= 10) return "Up";
+    if (pitch > 175 && yaw >= 0 && yaw <= 10) return "Down";
+    if (yaw < 0) return "Right";
+    if (yaw > 15) return "Left";
 
-    const yawThreshold = 12;
-    const pitchThreshold = 10;
-
-    if (Math.abs(pitch) > pitchThreshold) {
-      if (pitch < 90 && yaw < 10) return "Up";
-      if (pitch > 170 && yaw < 10) return "Down";
-    }
-
-    if (Math.abs(yaw) > yawThreshold) {
-      if (yaw < 0) return "Right";
-      if (yaw > 15) return "Left";
-    }
-
+    // Default case if no direction matches, indicating "straight" is the only fallback.
     return "Straight";
   };
 
@@ -103,7 +97,6 @@ export function FaceDetect() {
     count: number,
     direction: string
   ) => {
-    // Check debounce time
     const currentTime = Date.now();
     if (currentTime - lastCaptureTime.current < captureDebounceTime) {
       return;
@@ -113,20 +106,37 @@ export function FaceDetect() {
       const video = videoRef.current;
 
       try {
-        const offscreenCanvas = new OffscreenCanvas(224, 224);
+        // Calculate scaling factors based on the video’s natural resolution
+        const scaleX = video.videoWidth / video.width;
+        const scaleY = video.videoHeight / video.height;
+
+        // Scale the bounding box to match the actual video resolution
+        const scaledBoundingBox = {
+          x: boundingBox.x * scaleX,
+          y: boundingBox.y * scaleY,
+          width: boundingBox.width * scaleX,
+          height: boundingBox.height * scaleY,
+        };
+
+        // Create an OffscreenCanvas that matches the bounding box size
+        const offscreenCanvas = new OffscreenCanvas(
+          scaledBoundingBox.width,
+          scaledBoundingBox.height
+        );
         const context = offscreenCanvas.getContext("2d");
 
         if (context) {
+          // Draw the scaled bounding box from the video onto the offscreen canvas
           context.drawImage(
             video,
-            boundingBox.x - 50,
-            boundingBox.y - 50,
-            boundingBox.width,
-            boundingBox.height,
+            scaledBoundingBox.x,
+            scaledBoundingBox.y,
+            scaledBoundingBox.width,
+            scaledBoundingBox.height,
             0,
             0,
-            224,
-            224
+            scaledBoundingBox.width,
+            scaledBoundingBox.height
           );
 
           const blob = await offscreenCanvas.convertToBlob({
@@ -147,14 +157,13 @@ export function FaceDetect() {
           });
 
           if (response.ok) {
+            lastCaptureTime.current = currentTime;
             return true;
           } else {
             console.error("Failed to save image");
             return false;
           }
         }
-
-        lastCaptureTime.current = currentTime;
       } catch (error) {
         console.error("Error capturing and saving frame from video:", error);
       }
@@ -315,40 +324,84 @@ export function FaceDetect() {
   };
 
   return (
-    <div className="flex flex-col gap-y-3">
-      <div className="text-center">
-        <h2 className="text-2xl">
-          Look at the camera and follow the instructions
-        </h2>
-        {faceDirection === lookingFor ? (
-          <h1 className="text-xl text-green-500">Stay Out! Good Job!</h1>
-        ) : (
-          <h1 className="text-xl text-red-500">Turn to: {lookingFor}</h1>
-        )}
-      </div>
-      <div
-        className={`relative rounded-2xl  ${
-          faceDirection === lookingFor
-            ? "shadow-2xl shadow-green-500/50"
-            : "shadow-2xl shadow-red-500/50"
-        }`}
-      >
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          onPlay={handleVideoPlay}
-          width="720"
-          height="560"
-          className="rounded-2xl"
-        />
-        <canvas
-          ref={canvasRef}
-          width="720"
-          height="560"
-          style={{ position: "absolute", top: 0, left: 0 }}
-        />
-      </div>
-    </div>
+    <>
+      {!isMobile ? (
+        <>
+          <div className="flex flex-col gap-y-3">
+            <div className="text-center flex flex-col gap-y-3">
+              <h2 className="text-2xl">
+                Look at the camera and follow the instructions
+              </h2>
+              {faceDirection === lookingFor ? (
+                <h1 className="text-xl text-green-500 font-bold">Stay Out!</h1>
+              ) : (
+                <h1 className="text-xl text-red-500 font-bold">Turn to: {lookingFor}</h1>
+              )}
+            </div>
+            <div
+              className={`relative rounded-2xl  ${
+                faceDirection === lookingFor
+                  ? "shadow-2xl shadow-green-500/50"
+                  : "shadow-2xl shadow-red-500/50"
+              }`}
+            >
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                onPlay={handleVideoPlay}
+                width="720"
+                height="560"
+                className="rounded-2xl"
+              />
+              <canvas
+                ref={canvasRef}
+                width="720"
+                height="560"
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex flex-col gap-y-3">
+            <div className="text-center pt-3 flex flex-col gap-y-3">
+              <h2 className="text-sm font-bold">
+                Look at the camera and follow the instructions
+              </h2>
+              {faceDirection === lookingFor ? (
+                <h1 className="text-xl text-green-500 font-bold">Stay Out!</h1>
+              ) : (
+                <h1 className="text-xl text-red-500 font-bold">Turn to: {lookingFor}</h1>
+              )}
+            </div>
+            <div
+              className={`relative rounded-2xl  ${
+                faceDirection === lookingFor
+                  ? "shadow-2xl shadow-green-500/50"
+                  : "shadow-2xl shadow-red-500/50"
+              }`}
+            >
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                onPlay={handleVideoPlay}
+                width="380"
+                height="300"
+                className="rounded-2xl"
+              />
+              <canvas
+                ref={canvasRef}
+                width="380"
+                height="300"
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }

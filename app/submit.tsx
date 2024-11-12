@@ -3,8 +3,11 @@ import { AuthenticatorSchema } from "./type";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { convertNameEmail } from "@/config/name";
-import path from "path";
+import { useMediaQuery } from "react-responsive";
+
 export function Submit() {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
 
   const email = useWatch({ control, name: "email" });
@@ -46,33 +49,86 @@ export function Submit() {
   };
 
   return (
-    <section className="flex flex-col gap-y-10">
-      <div className="gap-y-2">
-        <h1 className="text-2xl">Checking Your Information</h1>
-        <h2 className="text-sm">
-          Please validate your information and submit!
-        </h2>
-      </div>
-      <div className="w-[500px] h-[500px] flex flex-col gap-y-3">
-        <Input type="email" label="Email" value={email} disabled />
-        <Input
-          type="name"
-          label="Full Name"
-          value={name}
-          onChange={(e) => setValue("name", e.target.value)}
-        />
-        <Input
-          type="name"
-          label="Your Orgnization"
-          className="mb-3"
-          value={organization}
-          onChange={(e) => setValue("organization", e.target.value)}
-        />
+    <>
+      {
+        // Web view
+        !isMobile ? (
+          <>
+            <div className="flex flex-col gap-y-10">
+              <div className="gap-y-2">
+                <h1 className="text-2xl">Checking Your Information</h1>
+                <h2 className="text-sm">Please fill out this form!</h2>
+              </div>
+              <div className="w-[500px] h-[500px] flex flex-col gap-y-3">
+                <Input type="email" label="Email" value={email} disabled />
+                <Input
+                  type="name"
+                  label="Full Name"
+                  placeholder="Ex: HOANG MAI DUNG"
+                  value={name}
+                  onChange={(e) => setValue("name", e.target.value)}
+                />
+                <Input
+                  type="name"
+                  label="Your Orgnization"
+                  placeholder="Ex: JSCLUB"
+                  className="mb-3"
+                  value={organization}
+                  onChange={(e) => setValue("organization", e.target.value)}
+                />
 
-        <Button color="primary" isLoading={loading} onClick={handleSubmit}>
-          {loading ? "Submiting..." : "Submit"}
-        </Button>
-      </div>
-    </section>
+                <Button
+                  color="primary"
+                  isLoading={loading}
+                  onClick={handleSubmit}
+                >
+                  {loading
+                    ? "To continue, you must allow to access your camera!"
+                    : "Submit"}
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : (
+          // Mobile view
+          <>
+            <div className="flex flex-col gap-y-2">
+              <div className="gap-y-2 p-4">
+                <h1 className="text-2xl">Checking Your Information</h1>
+                <h2 className="text-sm">Please fill out this form!</h2>
+              </div>
+              <div className="w-[380px] h-[380px] flex flex-col gap-y-3 p-4">
+                <Input type="email" label="Email" value={email} disabled />
+                <Input
+                  type="name"
+                  label="Full Name"
+                  placeholder="Ex: HOANG MAI DUNG"
+                  value={name}
+                  onChange={(e) => setValue("name", e.target.value)}
+                />
+                <Input
+                  type="name"
+                  label="Your Orgnization"
+                  placeholder="Ex: JSCLUB"
+                  className="mb-3"
+                  value={organization}
+                  onChange={(e) => setValue("organization", e.target.value)}
+                />
+
+                <Button
+                  color="primary"
+                  isLoading={loading}
+                  onClick={handleSubmit}
+                >
+                  {loading
+                    ? "To continue, you must allow to access your camera!"
+                    : "Submit"}
+                </Button>
+              </div>
+            </div>
+          </>
+        )
+      }
+    </>
   );
 }
