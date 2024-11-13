@@ -24,6 +24,7 @@ export function FaceDetect() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 720, height: 560 });
+  const [circleSize, setCircleSize] = useState({ width: 192, height: 192 }); // Initial size for circle (in pixels)
   const [progress, setProgress] = useState<Record<string, number>>({
     Straight: 0,
     Left: 0,
@@ -60,9 +61,17 @@ export function FaceDetect() {
 
         // For mobile, reduce dimensions slightly
         const scaleFactor = isMobile ? 0.9 : 1;
+        const newWidth = containerWidth * scaleFactor;
+        const newHeight = containerHeight * scaleFactor;
         setDimensions({
-          width: containerWidth * scaleFactor,
-          height: containerHeight * scaleFactor,
+          width: newWidth,
+          height: newHeight,
+        });
+
+        const circleDiameter = Math.min(newWidth, newHeight) * 0.65;
+        setCircleSize({
+          width: circleDiameter,
+          height: circleDiameter,
         });
       }
     };
@@ -453,21 +462,25 @@ export function FaceDetect() {
           />
 
           {/* Focus circle for mobile */}
+          {/* Updated responsive focus circle for mobile */}
           {isMobile && (
             <>
-              {/* SVG mask for the circular cutout */}
               <svg
                 className="absolute inset-0 w-full h-full pointer-events-none"
-                preserveAspectRatio="xMidYMid slice"
+                viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+                preserveAspectRatio="none"
               >
                 <defs>
                   <mask id="circle-mask">
                     <rect width="100%" height="100%" fill="white" />
-                    <circle cx="50%" cy="50%" r="96" fill="black" />{" "}
-                    {/* r=96 is half of w-48 (192px) */}
+                    <circle
+                      cx={dimensions.width / 2}
+                      cy={dimensions.height / 2}
+                      r={circleSize.width / 2}
+                      fill="black"
+                    />
                   </mask>
                 </defs>
-                {/* Black overlay with circular cutout */}
                 <rect
                   width="100%"
                   height="100%"
@@ -476,11 +489,6 @@ export function FaceDetect() {
                   mask="url(#circle-mask)"
                 />
               </svg>
-
-              {/* Focus circle outline */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-48 h-48 border-2 border-white rounded-full flex items-center justify-center"></div>
-              </div>
             </>
           )}
         </div>
