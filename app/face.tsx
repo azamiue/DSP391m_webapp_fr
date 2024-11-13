@@ -16,7 +16,7 @@ export function FaceDetect() {
   const TINY_FACE_DETECTOR_OPTIONS = useMemo(
     () =>
       new faceapi.TinyFaceDetectorOptions({
-        inputSize: isMobile ? 192 : 224,
+        inputSize: isMobile ? 224 : 224,
         scoreThreshold: 0.3,
       }),
     [isMobile]
