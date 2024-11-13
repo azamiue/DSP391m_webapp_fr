@@ -325,7 +325,7 @@ export function FaceDetect() {
         }
 
         // Draw detections
-        faceapi.draw.drawDetections(canvas, resizedDetections);
+        // faceapi.draw.drawDetections(canvas, resizedDetections);
         faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
 
         // Get current face direction
