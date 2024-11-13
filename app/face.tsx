@@ -454,13 +454,34 @@ export function FaceDetect() {
 
           {/* Focus circle for mobile */}
           {isMobile && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-48 h-48 border-4 border-white rounded-full opacity-50 flex items-center justify-center">
-                <div className="text-white text-sm text-center px-4">
-                  Fit your face in this circle
-                </div>
+            <>
+              {/* SVG mask for the circular cutout */}
+              <svg
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                preserveAspectRatio="xMidYMid slice"
+              >
+                <defs>
+                  <mask id="circle-mask">
+                    <rect width="100%" height="100%" fill="white" />
+                    <circle cx="50%" cy="50%" r="96" fill="black" />{" "}
+                    {/* r=96 is half of w-48 (192px) */}
+                  </mask>
+                </defs>
+                {/* Black overlay with circular cutout */}
+                <rect
+                  width="100%"
+                  height="100%"
+                  fill="black"
+                  opacity="0.7"
+                  mask="url(#circle-mask)"
+                />
+              </svg>
+
+              {/* Focus circle outline */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-48 h-48 border-2 border-white rounded-full flex items-center justify-center"></div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
