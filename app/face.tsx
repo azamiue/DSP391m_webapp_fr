@@ -10,6 +10,9 @@ import { useMediaQuery } from "react-responsive";
 export function FaceDetect() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 720, height: 560 });
+
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
 
   const isModelsLoaded = useWatch({ control, name: "ModelsLoaded" });
@@ -27,6 +30,25 @@ export function FaceDetect() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const publicDir = process.env.NEXT_PUBLIC_PUBLIC_URL;
+
+  // Update dimensions based on container size
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        // Maintain aspect ratio of 4:3
+        const containerHeight = (containerWidth * 3) / 4;
+        setDimensions({
+          width: containerWidth,
+          height: containerHeight,
+        });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
 
   // Load models
   useEffect(() => {
@@ -212,7 +234,7 @@ export function FaceDetect() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const displaySize = { width: video.width, height: video.height };
-    console.log("displaySize", displaySize)
+    console.log("displaySize", displaySize);
     faceapi.matchDimensions(canvas, displaySize);
 
     // Initialize state object to track counts
@@ -324,84 +346,44 @@ export function FaceDetect() {
   };
 
   return (
-    <>
-      {!isMobile ? (
-        <>
-          <div className="flex flex-col gap-y-3">
-            <div className="text-center flex flex-col gap-y-3">
-              <h2 className="text-2xl">
-                Look at the camera and follow the instructions
-              </h2>
-              {faceDirection === lookingFor ? (
-                <h1 className="text-xl text-green-500 font-bold">Stay Out!</h1>
-              ) : (
-                <h1 className="text-xl text-red-500 font-bold">Turn to: {lookingFor}</h1>
-              )}
-            </div>
-            <div
-              className={`relative rounded-2xl  ${
-                faceDirection === lookingFor
-                  ? "shadow-2xl shadow-green-500/50"
-                  : "shadow-2xl shadow-red-500/50"
-              }`}
-            >
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                onPlay={handleVideoPlay}
-                width="720"
-                height="560"
-                className="rounded-2xl"
-              />
-              <canvas
-                ref={canvasRef}
-                width="720"
-                height="560"
-                style={{ position: "absolute", top: 0, left: 0 }}
-              />
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex flex-col gap-y-3">
-            <div className="text-center pt-3 flex flex-col gap-y-3">
-              <h2 className="text-sm font-bold">
-                Look at the camera and follow the instructions
-              </h2>
-              {faceDirection === lookingFor ? (
-                <h1 className="text-xl text-green-500 font-bold">Stay Out!</h1>
-              ) : (
-                <h1 className="text-xl text-red-500 font-bold">Turn to: {lookingFor}</h1>
-              )}
-            </div>
-            <div
-              className={`relative rounded-2xl  ${
-                faceDirection === lookingFor
-                  ? "shadow-2xl shadow-green-500/50"
-                  : "shadow-2xl shadow-red-500/50"
-              }`}
-            >
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                onPlay={handleVideoPlay}
-                width="410"
-                height="308"
-                className="rounded-2xl object-cover"
-              />
-              <canvas
-                ref={canvasRef}
-                width="410"
-                height = "308"
-                className="absolute top-0 left-0 w-full h-full"
-              />
-            </div>
-          </div>
-        </>
-      )}
-    </>
+    <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
+      <div className="flex flex-col gap-y-3">
+        <div className="text-center flex flex-col gap-y-3">
+          <h2 className={`${isMobile ? "text-sm" : "text-2xl"} font-bold`}>
+            Look at the camera and follow the instructions
+          </h2>
+          {faceDirection === lookingFor ? (
+            <h1 className="text-xl text-green-500 font-bold">Stay Out!</h1>
+          ) : (
+            <h1 className="text-xl text-red-500 font-bold">
+              Turn to: {lookingFor}
+            </h1>
+          )}
+        </div>
+        <div
+          className={`relative rounded-2xl ${
+            faceDirection === lookingFor
+              ? "shadow-2xl shadow-green-500/50"
+              : "shadow-2xl shadow-red-500/50"
+          }`}
+        >
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            onPlay={handleVideoPlay}
+            width={dimensions.width}
+            height={dimensions.height}
+            className="rounded-2xl w-full h-full object-cover"
+          />
+          <canvas
+            ref={canvasRef}
+            width={dimensions.width}
+            height={dimensions.height}
+            className="absolute top-0 left-0 w-full h-full"
+          />
+        </div>
+      </div>
+    </div>
   );
 }
