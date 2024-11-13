@@ -230,11 +230,10 @@ export default function AuthenPage() {
                 <Submit />
               </FormProvider>
             </div>
-            
           )}
 
           {isFinish && (
-            <div className="text-2xl text-center">
+            <div className="text-2xl text-center p-4">
               Thanks {name} for submited! See you!
             </div>
           )}

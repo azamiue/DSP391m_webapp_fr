@@ -102,8 +102,8 @@ export function FaceDetect() {
   // Function to determine face direction based on angles
   const getFaceDirection = ({ yaw, pitch }: { yaw: number; pitch: number }) => {
     // Define directional boundaries (example fixed angle ranges)
-    if (pitch < 85 && yaw >= 0 && yaw <= 10) return "Up";
-    if (pitch > 175 && yaw >= 0 && yaw <= 10) return "Down";
+    if (pitch < 90 && yaw >= -2 && yaw <= 15) return "Up";
+    if (pitch > 165 && yaw >= -2 && yaw <= 15) return "Down";
     if (yaw < 0) return "Right";
     if (yaw > 15) return "Left";
 
@@ -126,7 +126,7 @@ export function FaceDetect() {
       const video = videoRef.current;
 
       try {
-        // Calculate scaling factors based on the video’s natural resolution
+        // Calculate scaling factors based on the video's natural resolution
         const scaleX = video.videoWidth / video.width;
         const scaleY = video.videoHeight / video.height;
 
@@ -138,16 +138,19 @@ export function FaceDetect() {
           height: boundingBox.height * scaleY,
         };
 
-        // Create an OffscreenCanvas that matches the bounding box size
-        const offscreenCanvas = new OffscreenCanvas(
+        // Create two canvas elements: one for initial capture and one for resizing
+        const captureCanvas = new OffscreenCanvas(
           scaledBoundingBox.width,
           scaledBoundingBox.height
         );
-        const context = offscreenCanvas.getContext("2d");
+        const outputCanvas = new OffscreenCanvas(224, 224);
 
-        if (context) {
-          // Draw the scaled bounding box from the video onto the offscreen canvas
-          context.drawImage(
+        const captureContext = captureCanvas.getContext("2d");
+        const outputContext = outputCanvas.getContext("2d");
+
+        if (captureContext && outputContext) {
+          // First, capture the face region at original size
+          captureContext.drawImage(
             video,
             scaledBoundingBox.x,
             scaledBoundingBox.y,
@@ -159,7 +162,38 @@ export function FaceDetect() {
             scaledBoundingBox.height
           );
 
-          const blob = await offscreenCanvas.convertToBlob({
+          // Calculate dimensions to maintain aspect ratio while fitting in 224x224
+          const aspectRatio =
+            scaledBoundingBox.width / scaledBoundingBox.height;
+          let drawWidth = 224;
+          let drawHeight = 224;
+          let offsetX = 0;
+          let offsetY = 0;
+
+          if (aspectRatio > 1) {
+            // Width is greater than height
+            drawHeight = 224 / aspectRatio;
+            offsetY = (224 - drawHeight) / 2;
+          } else {
+            // Height is greater than width
+            drawWidth = 224 * aspectRatio;
+            offsetX = (224 - drawWidth) / 2;
+          }
+
+          // Fill the background with black (optional)
+          // outputContext.fillStyle = "#000000";
+          // outputContext.fillRect(0, 0, 224, 224);
+
+          // Draw the face image centered in the 224x224 canvas
+          outputContext.drawImage(
+            captureCanvas,
+            offsetX,
+            offsetY,
+            drawWidth,
+            drawHeight
+          );
+
+          const blob = await outputCanvas.convertToBlob({
             type: "image/jpeg",
             quality: 1,
           });
@@ -349,7 +383,11 @@ export function FaceDetect() {
     <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
       <div className="flex flex-col gap-y-3">
         <div className="text-center flex flex-col gap-y-3">
-          <h2 className={`${isMobile ? "text-sm" : "text-2xl"} font-bold`}>
+          <h2
+            className={`${
+              isMobile ? "text-sm pt-3" : "text-2xl pt-3"
+            } font-bold`}
+          >
             Look at the camera and follow the instructions
           </h2>
           {faceDirection === lookingFor ? (
