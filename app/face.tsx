@@ -25,7 +25,7 @@ export function FaceDetect() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastCaptureTime = useRef<number>(0);
-  const captureDebounceTime = 50;
+  const captureDebounceTime = 100; 
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -102,10 +102,20 @@ export function FaceDetect() {
   // Function to determine face direction based on angles
   const getFaceDirection = ({ yaw, pitch }: { yaw: number; pitch: number }) => {
     // Define directional boundaries (example fixed angle ranges)
-    if (pitch < 90 && yaw >= -2 && yaw <= 15) return "Up";
-    if (pitch > 165 && yaw >= -2 && yaw <= 15) return "Down";
-    if (yaw < 0) return "Right";
-    if (yaw > 15) return "Left";
+    if (!isMobile) {
+      if (pitch < 90 && yaw >= -2 && yaw <= 15) return "Up";
+      if (pitch > 170 && yaw >= -2 && yaw <= 15) return "Down";
+      if (yaw < 0) return "Right";
+      if (yaw > 15) return "Left";
+
+      // Default case if no direction matches, indicating "straight" is the only fallback.
+      return "Straight";
+    }
+
+    if (pitch < 90 && yaw >= -10 && yaw <= 15) return "Up";
+    if (pitch > 170 && yaw >= -10 && yaw <= 15) return "Down";
+    if (yaw < -20) return "Right";
+    if (yaw > 20) return "Left";
 
     // Default case if no direction matches, indicating "straight" is the only fallback.
     return "Straight";
@@ -179,11 +189,7 @@ export function FaceDetect() {
             drawWidth = 224 * aspectRatio;
             offsetX = (224 - drawWidth) / 2;
           }
-
-          // Fill the background with black (optional)
-          // outputContext.fillStyle = "#000000";
-          // outputContext.fillRect(0, 0, 224, 224);
-
+          
           // Draw the face image centered in the 224x224 canvas
           outputContext.drawImage(
             captureCanvas,
@@ -343,6 +349,8 @@ export function FaceDetect() {
           return;
         }
 
+        
+
         // Update UI to show what we're looking for
         setValue("lookingFor", currentStage.direction);
 
@@ -413,12 +421,14 @@ export function FaceDetect() {
             width={dimensions.width}
             height={dimensions.height}
             className="rounded-2xl w-full h-full object-cover"
+            style={{ transform: isMobile ? "scaleX(-1)" : "none" }}
           />
           <canvas
             ref={canvasRef}
             width={dimensions.width}
             height={dimensions.height}
             className="absolute top-0 left-0 w-full h-full"
+            style={{ transform: isMobile ? "scaleX(-1)" : "none" }}
           />
         </div>
       </div>

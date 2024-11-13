@@ -158,7 +158,7 @@ export function InformationPage() {
                   isDisabled={handleDisable}
                 >
                   {loading
-                    ? "To continue, you must allow to access your camera!"
+                    ? "Allow to access your camera!"
                     : "Submit"}
                 </Button>
               </div>

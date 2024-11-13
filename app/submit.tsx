@@ -118,7 +118,7 @@ export function Submit() {
                   isLoading={loading}
                   onClick={handleSubmit}
                 >
-                  {loading ? "Allow to access your camera!" : "Submit"}
+                  {loading ? "Submiting..." : "Submit"}
                 </Button>
               </div>
             </div>
