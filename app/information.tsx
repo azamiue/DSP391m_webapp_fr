@@ -46,7 +46,7 @@ export function InformationPage() {
       setValue("faceStep", true);
     } catch (error) {
       // Camera access denied
-      alert("To continue, you must allow to access your camera!");
+      alert("Allow to access your camera!");
       setValue("faceStep", false);
     } finally {
       setValue("loading", false);
@@ -110,9 +110,7 @@ export function InformationPage() {
                   onClick={handleSubmit}
                   isDisabled={handleDisable}
                 >
-                  {loading
-                    ? "To continue, you must allow to access your camera!"
-                    : "Submit"}
+                  {loading ? "Allow to access your camera!" : "Submit"}
                 </Button>
               </div>
             </div>
