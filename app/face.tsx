@@ -24,6 +24,13 @@ export function FaceDetect() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 720, height: 560 });
+  const [progress, setProgress] = useState<Record<string, number>>({
+    Straight: 0,
+    Left: 0,
+    Right: 0,
+    Up: 0,
+    Down: 0,
+  });
 
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
 
@@ -159,7 +166,7 @@ export function FaceDetect() {
         height: boundingBox.height * scaleY,
       };
 
-      const outputSize = isMobile ? 192 : 224;
+      const outputSize = isMobile ? 224 : 224;
       const captureCanvas = new OffscreenCanvas(
         scaledBoundingBox.width,
         scaledBoundingBox.height
@@ -224,6 +231,11 @@ export function FaceDetect() {
 
       if (response.ok) {
         lastCaptureTime.current = currentTime;
+        // Update progress when image is captured successfully
+        setProgress((prev) => ({
+          ...prev,
+          [direction]: Math.min((prev[direction] || 0) + 2, 100), // Increment by 2% for each successful capture
+        }));
         return true;
       }
     } catch (error) {
@@ -397,6 +409,24 @@ export function FaceDetect() {
             </h1>
           )}
         </div>
+
+        {/* Progress bars */}
+        <div className="grid grid-cols-5 gap-2 px-4 mb-4">
+          {Object.entries(progress).map(([direction, value]) => (
+            <div key={direction} className="flex flex-col items-center">
+              <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 transition-all duration-300"
+                  style={{ width: `${value}%` }}
+                />
+              </div>
+              <span className={`${isMobile ? "text-xs" : "text-sm"} mt-1`}>
+                {direction}
+              </span>
+            </div>
+          ))}
+        </div>
+
         <div
           className={`relative rounded-2xl ${
             faceDirection === lookingFor
@@ -421,6 +451,17 @@ export function FaceDetect() {
             className="absolute top-0 left-0 w-full h-full"
             style={{ transform: isMobile ? "scaleX(-1)" : "none" }}
           />
+
+          {/* Focus circle for mobile */}
+          {isMobile && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-48 h-48 border-4 border-white rounded-full opacity-50 flex items-center justify-center">
+                <div className="text-white text-sm text-center px-4">
+                  Fit your face in this circle
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
