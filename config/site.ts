@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Authentication",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "FPTU AI CLUB",
+  description: "FPTU AI CLUB - Authentication",
   navItems: [
     // {
     //   label: "Home",
