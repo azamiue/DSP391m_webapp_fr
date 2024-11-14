@@ -3,16 +3,9 @@ import { AuthenticatorSchema } from "./type";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-} from "@nextui-org/modal";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
+import Link from "next/link";
 
 export function InformationPage() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -23,15 +16,6 @@ export function InformationPage() {
   const loading = useWatch({ control, name: "loading" });
   const name = useWatch({ control, name: "name" });
   const organization = useWatch({ control, name: "organization" });
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalContent, setModalContent] = useState<React.ReactNode>("");
-
-  const handleLinkClick = () => {
-    console.log("done");
-  };
 
   const handleSubmit = async () => {
     setValue("loading", true);
@@ -96,12 +80,13 @@ export function InformationPage() {
 
                 <div className="text-sm">
                   By submiting you agree to the{" "}
-                  <a
-                    onClick={handleLinkClick}
+                  <Link
+                    href={"https://fptuaiclub.me/policy"}
+                    target="_blank"
                     className="underline cursor-pointer"
                   >
                     Privacy policy
-                  </a>
+                  </Link>
                 </div>
 
                 <Button
@@ -143,12 +128,13 @@ export function InformationPage() {
 
                 <div className="text-sm">
                   By submiting you agree to the{" "}
-                  <a
-                    onClick={handleLinkClick}
+                  <Link
+                    href={"https://fptuaiclub.me/policy"}
+                    target="_blank"
                     className="underline cursor-pointer"
                   >
                     Privacy policy
-                  </a>
+                  </Link>
                 </div>
 
                 <Button
@@ -157,9 +143,7 @@ export function InformationPage() {
                   onClick={handleSubmit}
                   isDisabled={handleDisable}
                 >
-                  {loading
-                    ? "Allow to access your camera!"
-                    : "Submit"}
+                  {loading ? "Allow to access your camera!" : "Submit"}
                 </Button>
               </div>
             </div>
