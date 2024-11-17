@@ -175,8 +175,12 @@ export default function AuthenPage() {
           )}
 
           {isFinish && (
-            <div className="text-[30px] flex justify-center items-center">
-              Thanks {name} for submited! See you!
+            <div className="text-[30px] flex justify-center items-center flex-col border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
+              <p>Thanks {name}</p>
+              <p className="text-[25px]">
+                Welcome to "RETRO NIGHT VI: Legacy of Flames". FAIC with love
+                for you!
+              </p>
             </div>
           )}
         </>
@@ -233,13 +237,13 @@ export default function AuthenPage() {
           )}
 
           {isFinish && (
-             <div className="text-2xl text-center p-4 flex flex-col">
-              <p>Thanks {name} !</p>
-              <p>
+            <div className="text-xl flex flex-col border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
+              <p className="text-center">Thanks {name}</p>
+              <p className="text-[15px] text-center">
                 Welcome to "RETRO NIGHT VI: Legacy of Flames". FAIC with love
                 for you!
               </p>
-           </div>
+            </div>
           )}
         </div>
       )}
