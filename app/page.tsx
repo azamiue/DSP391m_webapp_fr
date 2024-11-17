@@ -233,9 +233,13 @@ export default function AuthenPage() {
           )}
 
           {isFinish && (
-            <div className="text-2xl text-center p-4">
-              Thanks {name} for submited! See you!
-            </div>
+             <div className="text-2xl text-center p-4 flex flex-col">
+              <p>Thanks {name} !</p>
+              <p>
+                Welcome to "RETRO NIGHT VI: Legacy of Flames". FAIC with love
+                for you!
+              </p>
+           </div>
           )}
         </div>
       )}

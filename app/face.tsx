@@ -9,18 +9,27 @@ import { useMediaQuery } from "react-responsive";
 
 export function FaceDetect() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const [isIOS, setIsIOS] = useState(false);
+
+  // Check if device is iOS
+  useEffect(() => {
+    const checkIsIOS = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(userAgent);
+    };
+    setIsIOS(checkIsIOS());
+  }, []);
+
 
   // Optimize detection intervals based on device
   const DETECTION_INTERVAL = useMemo(() => (isMobile ? 150 : 100), [isMobile]);
   // Reduce model size for mobile
-  const TINY_FACE_DETECTOR_OPTIONS = useMemo(
-    () =>
-      new faceapi.TinyFaceDetectorOptions({
-        inputSize: isMobile ? 224 : 224,
-        scoreThreshold: 0.3,
-      }),
-    [isMobile]
-  );
+  const TINY_FACE_DETECTOR_OPTIONS = useMemo(() => {
+    return new faceapi.TinyFaceDetectorOptions({
+      inputSize: 224,
+      scoreThreshold: 0.2,
+    });
+  }, [isIOS]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 720, height: 560 });
@@ -45,7 +54,7 @@ export function FaceDetect() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastCaptureTime = useRef<number>(0);
-  const captureDebounceTime = isMobile ? 150 : 100;
+  const captureDebounceTime = isMobile ? 150 : 100
   const streamRef = useRef<MediaStream | null>(null);
   const processingRef = useRef<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -384,20 +393,47 @@ export function FaceDetect() {
     }
   };
 
-  // Activate camera
-  useEffect(() => {
-    if (isModelsLoaded && videoRef.current && !isDone) {
-      navigator.mediaDevices.getUserMedia({ video: {} }).then((stream) => {
+ // Modified camera activation with iOS-specific constraints
+ useEffect(() => {
+  if (isModelsLoaded && videoRef.current && !isDone) {
+    const constraints: MediaStreamConstraints = {
+      video: {
+        facingMode: 'user'
+      }
+    };
+
+    // Special handling for iOS devices
+    if (isIOS) {
+      // Force hardware acceleration for iOS
+      if (videoRef.current) {
+        videoRef.current.setAttribute('playsinline', 'true');
+        videoRef.current.setAttribute('webkit-playsinline', 'true');
+      }
+    }
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then((stream) => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           streamRef.current = stream;
+          
+          // For iOS, we need to call play() after setting srcObject
+          if (isIOS) {
+            videoRef.current.play().catch(error => {
+              console.error("Error playing video:", error);
+            });
+          }
         }
+      })
+      .catch((error) => {
+        console.error("Error accessing camera:", error);
       });
-    }
-    return () => {
-      stopWebcam();
-    };
-  }, [isModelsLoaded, isDone]);
+  }
+  return () => {
+    stopWebcam();
+  };
+}, [isModelsLoaded, isDone, isIOS]);
 
   return (
     <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
@@ -446,6 +482,7 @@ export function FaceDetect() {
           <video
             ref={videoRef}
             autoPlay
+            // playsInline
             muted
             onPlay={handleVideoPlay}
             width={dimensions.width}
