@@ -4,7 +4,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { convertNameEmail } from "@/config/name";
 import { useMediaQuery } from "react-responsive";
-import { set } from "zod";
+import { reg } from "./api";
 
 export function Submit() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -68,6 +68,26 @@ export function Submit() {
       console.error("Submission error:", error);
     } finally {
       setValue("loading", false);
+
+      const email_lower = email.toLowerCase();
+
+      try {
+        // Make the API request using fetch
+        const response = await fetch(`${reg}${email_lower}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("API request failed");
+        }
+
+        const data = await response.json();
+      } catch (error) {
+        console.error("Request failed:", error);
+      }
     }
   };
 

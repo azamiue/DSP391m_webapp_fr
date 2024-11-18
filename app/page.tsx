@@ -24,6 +24,7 @@ export default function AuthenPage() {
       loading: false,
       success: false,
       fail: false,
+      alreadyReg: false,
       faceStep: false,
       faceDirection: "No face detected",
       lookingFor: "Straight",
@@ -39,6 +40,7 @@ export default function AuthenPage() {
   const isDone = useWatch({ control, name: "isDone" });
   const isFinish = useWatch({ control, name: "isFinish" });
   const name = useWatch({ control, name: "name" });
+  const alreadyReg = useWatch({ control, name: "alreadyReg" });
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -81,7 +83,7 @@ export default function AuthenPage() {
       });
     }
 
-    if (isFinish) {
+    if (isFinish && !isMobile) {
       toast.success("Your Information Send Successfully", {
         position: "top-right",
         autoClose: 2000,
@@ -93,6 +95,50 @@ export default function AuthenPage() {
         theme: "dark",
         transition: Bounce,
       });
+    }
+
+    if (isFinish && isMobile) {
+      toast.success("Your Information Send Successfully", {
+        className: "w-[300px] mx-auto mt-2",
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+
+    if (alreadyReg && !isMobile) {
+      toast.error("Your email has been registered!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+      setValue("alreadyReg", false);
+    }
+
+    if (alreadyReg && isMobile) {
+      toast.error("Your email has been registered!", {
+        className: "w-[300px] mx-auto mt-2",
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setValue("alreadyReg", false);
     }
 
     if (fail && !isMobile) {
@@ -124,7 +170,7 @@ export default function AuthenPage() {
       });
       setValue("fail", false);
     }
-  }, [success, fail, isFinish, setValue]);
+  }, [success, fail, isFinish, alreadyReg, setValue]);
 
   return (
     <section className="w-full h-full flex justify-center items-center">
