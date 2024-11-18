@@ -15,9 +15,11 @@ export function InputValid() {
   const handleClick = async () => {
     setValue("loading", true);
 
+    const email_lower = email.toLowerCase();
+
     try {
       // Make the API request using fetch
-      const response = await fetch(`${authenApi}${email}`, {
+      const response = await fetch(`${authenApi}${email_lower}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

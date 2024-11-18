@@ -19,6 +19,8 @@ export function InformationPage() {
 
   const handleSubmit = async () => {
     setValue("loading", true);
+    setValue("tempName", name);
+    setValue("tempOrganization", organization);
 
     try {
       // Request camera access

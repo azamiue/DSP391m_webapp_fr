@@ -4,6 +4,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { convertNameEmail } from "@/config/name";
 import { useMediaQuery } from "react-responsive";
+import { set } from "zod";
 
 export function Submit() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -14,12 +15,34 @@ export function Submit() {
   const name = useWatch({ control, name: "name" });
   const organization = useWatch({ control, name: "organization" });
   const loading = useWatch({ control, name: "loading" });
+  const tempName = useWatch({ control, name: "tempName" });
+  const tempOrganization = useWatch({ control, name: "tempOrganization" });
 
   const handleSubmit = async () => {
     try {
       setValue("loading", true);
 
       const name_email = convertNameEmail(email);
+
+      if (tempName !== name) {
+        try {
+          const response = await fetch("/api/rename-folder", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name_email: name_email,
+              name: name,
+              tempName: tempName,
+            }),
+          });
+
+          const data = await response.json();
+        } catch (error) {
+          console.error("Request failed:", error);
+        }
+      }
 
       const response = await fetch("/api/check-folder", {
         method: "POST",
@@ -82,7 +105,7 @@ export function Submit() {
                   isLoading={loading}
                   onClick={handleSubmit}
                 >
-                  {loading ? "Allow to access your camera!" : "Submit"}
+                  {loading ? "Submiting..." : "Submit"}
                 </Button>
               </div>
             </div>

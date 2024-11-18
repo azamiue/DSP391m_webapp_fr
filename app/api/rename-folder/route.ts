@@ -1,0 +1,36 @@
+import fs from "fs/promises";
+import path from "path";
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
+  try {
+    const { name_email, name, tempName } = await request.json();
+
+    // Define the directories
+    const projectRoot = process.cwd();
+    const parentDir = path.join(projectRoot, "..");
+    const dataDir = path.join(parentDir, "data", "pics");
+
+    // Build old and new folder paths
+    const oldFolderName = `[${name_email}] ${tempName}`;
+    const newFolderName = `[${name_email}] ${name}`;
+    const oldFolderPath = path.join(dataDir, oldFolderName);
+    const newFolderPath = path.join(dataDir, newFolderName);
+
+    // Rename the folder
+    await fs.rename(oldFolderPath, newFolderPath);
+
+    return NextResponse.json(
+      {
+        message: `Folder renamed from "${oldFolderName}" to "${newFolderName}" successfully.`,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error renaming folder:", error);
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 }
+    );
+  }
+}
