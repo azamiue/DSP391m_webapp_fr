@@ -20,7 +20,6 @@ export function FaceDetect() {
     setIsIOS(checkIsIOS());
   }, []);
 
-
   // Optimize detection intervals based on device
   const DETECTION_INTERVAL = useMemo(() => (isMobile ? 150 : 100), [isMobile]);
   // Reduce model size for mobile
@@ -54,7 +53,7 @@ export function FaceDetect() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastCaptureTime = useRef<number>(0);
-  const captureDebounceTime = isMobile ? 150 : 100
+  const captureDebounceTime = isMobile ? 150 : 100;
   const streamRef = useRef<MediaStream | null>(null);
   const processingRef = useRef<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -365,6 +364,11 @@ export function FaceDetect() {
             counts[directionKey]++;
             if (counts[directionKey] === currentStage.target) {
               currentStageIndex++;
+
+              // Trigger vibration on mobile
+              if (isMobile && navigator.vibrate) {
+                navigator.vibrate(200); // Rung 200ms
+              }
             }
           }
         }
@@ -393,47 +397,47 @@ export function FaceDetect() {
     }
   };
 
- // Modified camera activation with iOS-specific constraints
- useEffect(() => {
-  if (isModelsLoaded && videoRef.current && !isDone) {
-    const constraints: MediaStreamConstraints = {
-      video: {
-        facingMode: 'user'
-      }
-    };
+  // Modified camera activation with iOS-specific constraints
+  useEffect(() => {
+    if (isModelsLoaded && videoRef.current && !isDone) {
+      const constraints: MediaStreamConstraints = {
+        video: {
+          facingMode: "user",
+        },
+      };
 
-    // Special handling for iOS devices
-    if (isIOS) {
-      // Force hardware acceleration for iOS
-      if (videoRef.current) {
-        videoRef.current.setAttribute('playsinline', 'true');
-        videoRef.current.setAttribute('webkit-playsinline', 'true');
-      }
-    }
-
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then((stream) => {
+      // Special handling for iOS devices
+      if (isIOS) {
+        // Force hardware acceleration for iOS
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          streamRef.current = stream;
-          
-          // For iOS, we need to call play() after setting srcObject
-          if (isIOS) {
-            videoRef.current.play().catch(error => {
-              console.error("Error playing video:", error);
-            });
-          }
+          videoRef.current.setAttribute("playsinline", "true");
+          videoRef.current.setAttribute("webkit-playsinline", "true");
         }
-      })
-      .catch((error) => {
-        console.error("Error accessing camera:", error);
-      });
-  }
-  return () => {
-    stopWebcam();
-  };
-}, [isModelsLoaded, isDone, isIOS]);
+      }
+
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then((stream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            streamRef.current = stream;
+
+            // For iOS, we need to call play() after setting srcObject
+            if (isIOS) {
+              videoRef.current.play().catch((error) => {
+                console.error("Error playing video:", error);
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error accessing camera:", error);
+        });
+    }
+    return () => {
+      stopWebcam();
+    };
+  }, [isModelsLoaded, isDone, isIOS]);
 
   return (
     <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
