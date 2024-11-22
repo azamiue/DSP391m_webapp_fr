@@ -107,14 +107,14 @@ export function Submit() {
                 <Input
                   type="name"
                   label="Full Name"
-                  placeholder="Ex: HOANG MAI DUNG"
+                  placeholder="Ex: NGUYEN QUOC THAI"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
                 <Input
                   type="name"
                   label="Your Orgnization"
-                  placeholder="Ex: JSCLUB"
+                  placeholder="Ex: AI CLUB"
                   className="mb-3"
                   value={organization}
                   onChange={(e) => setValue("organization", e.target.value)}
@@ -143,14 +143,14 @@ export function Submit() {
                 <Input
                   type="name"
                   label="Full Name"
-                  placeholder="Ex: HOANG MAI DUNG"
+                  placeholder="Ex: NGUYEN QUOC THAI"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
                 <Input
                   type="name"
                   label="Your Orgnization"
-                  placeholder="Ex: JSCLUB"
+                  placeholder="Ex: AI CLUB"
                   className="mb-3"
                   value={organization}
                   onChange={(e) => setValue("organization", e.target.value)}

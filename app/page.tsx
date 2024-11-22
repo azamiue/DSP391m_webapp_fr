@@ -13,6 +13,7 @@ import { InformationPage } from "./information";
 import { FaceDetect } from "./face";
 import { Submit } from "./submit";
 import { useMediaQuery } from "react-responsive";
+import Head from 'next/head'
 
 export default function AuthenPage() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -112,7 +113,7 @@ export default function AuthenPage() {
     }
 
     if (alreadyReg && !isMobile) {
-      toast.error("Your email has been registered!", {
+      toast.warn("Your email has been registered!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
@@ -127,7 +128,7 @@ export default function AuthenPage() {
     }
 
     if (alreadyReg && isMobile) {
-      toast.error("Your email has been registered!", {
+      toast.warn("Your email has been registered!", {
         className: "w-[300px] mx-auto mt-2",
         position: "top-center",
         autoClose: 2000,
@@ -188,8 +189,7 @@ export default function AuthenPage() {
                     </div>
                   </div>
                   <h1 className="text-sm font-semibold">
-                    Eligibility check: enter your email you have received an
-                    invitation from the organizers
+                  Eligibility check: enter your email you have received an invitation from FPTU AI CLUB.
                   </h1>
                   <FormProvider {...methods}>
                     <InputValid />
@@ -247,8 +247,7 @@ export default function AuthenPage() {
                       Authentication&nbsp;
                     </div>
                     <h1 className="text-sm font-semibold text-center w-[350px]">
-                      Eligibility check: enter your email you have received an
-                      invitation from the organizers
+                    Eligibility check: enter your email you have received an invitation from FPTU AI CLUB.
                     </h1>
                     <FormProvider {...methods}>
                       <InputValid />
