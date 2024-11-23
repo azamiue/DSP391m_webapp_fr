@@ -444,18 +444,24 @@ export function FaceDetect() {
   }, [isModelsLoaded, isDone, isIOS]);
 
   const lookingForVietnamese = useMemo(() => {
-    if (lookingFor === "Straight") {
-      return "Thẳng";
-    } else if (lookingFor === "Left") {
+    console.log("lookingFor", lookingFor);
+    if (lookingFor === "Left") {
       return "Trái";
-    } else if (lookingFor === "Right") {
+    }
+    if (lookingFor === "Right") {
       return "Phải";
-    } else if (lookingFor === "Up") {
+    }
+    if (lookingFor === "Up") {
       return "Lên";
-    } else if (lookingFor === "Down") {
+    }
+    if (lookingFor === "Down") {
       return "Xuống";
     }
-  }, []);
+
+    return "Thẳng";
+  }, [lookingFor]);
+
+  console.log("lookingForVietnamese", lookingForVietnamese);
 
   return (
     <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
