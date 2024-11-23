@@ -16,7 +16,7 @@ const PrivacyPolicy = () => {
             <div className="border-1 border-transparent rounded-2xl backdrop-blur-3xl bg-white/20 p-5">
               <ScrollShadow
                 hideScrollBar
-                className={`h-[750px] ${isMobile ? "h-[600px]" : ""}`}
+                className={`h-[600px] ${isMobile ? "h-[600px]" : ""}`}
               >
                 <div className="flex flex-col gap-y-4">
                   <h1 className="font-bold text-2xl text-center">
@@ -114,7 +114,7 @@ const PrivacyPolicy = () => {
             <div className="border-1 border-transparent rounded-2xl backdrop-blur-3xl bg-white/20 p-5">
               <ScrollShadow
                 hideScrollBar
-                className={`h-[750px] ${isMobile ? "h-[600px]" : ""}`}
+                className={`h-[600px] ${isMobile ? "h-[600px]" : ""}`}
               >
                 <div className="flex flex-col gap-y-4">
                   <h1 className="font-bold text-2xl text-center">
