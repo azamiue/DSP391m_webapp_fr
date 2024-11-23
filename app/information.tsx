@@ -6,10 +6,7 @@ import { Button } from "@nextui-org/button";
 import { useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
 import Link from "next/link";
-import {
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import { clubs, plans } from "./data";
 
 export function InformationPage() {
@@ -22,8 +19,6 @@ export function InformationPage() {
   const name = useWatch({ control, name: "name" });
   const organization = useWatch({ control, name: "organization" });
   const selectPlan = useWatch({ control, name: "selectPlan" });
-
-  console.log("selectPlan", selectPlan)
 
   const handleSubmit = async () => {
     setValue("loading", true);
@@ -76,7 +71,7 @@ export function InformationPage() {
                 <Input
                   type="name"
                   label="Họ và Tên"
-                  placeholder="Ex: NGUYEN VAN A"
+                  placeholder="E.g: NGUYEN VAN A"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
@@ -91,27 +86,25 @@ export function InformationPage() {
                 <Select
                   label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKeys={organization}
+                  selectedKeys={organization ? [organization] : []}
                   onSelectionChange={(e) =>
-                    setValue("organization", e as string)
+                    setValue("organization", e.currentKey as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <SelectItem key={club.key}>
-                      {club.label}
-                    </SelectItem>
+                    <SelectItem key={club.key}>{club.label}</SelectItem>
                   ))}
                 </Select>
 
                 <Select
                   label="Bạn muốn tham dự chương trình nào?"
-                  selectedKeys={selectPlan}
-                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
+                  selectedKeys={selectPlan ? [selectPlan] : []}
+                  onSelectionChange={(e) =>
+                    setValue("selectPlan", e.currentKey as string)
+                  }
                 >
                   {plans.map((plan) => (
-                    <SelectItem key={plan.key}>
-                      {plan.label}
-                    </SelectItem>
+                    <SelectItem key={plan.key}>{plan.label}</SelectItem>
                   ))}
                 </Select>
 
@@ -153,34 +146,32 @@ export function InformationPage() {
                 <Input
                   type="name"
                   label="Họ và Tên"
-                  placeholder="Ex: NGUYEN VAN A"
+                  placeholder="E.g: NGUYEN VAN A"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
                 <Select
                   label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKeys={organization}
+                  selectedKeys={organization ? [organization] : []}
                   onSelectionChange={(e) =>
-                    setValue("organization", e as string)
+                    setValue("organization", e.currentKey as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <SelectItem key={club.key}>
-                      {club.label}
-                    </SelectItem>
+                    <SelectItem key={club.key}>{club.label}</SelectItem>
                   ))}
                 </Select>
 
                 <Select
                   label="Bạn muốn tham dự chương trình nào?"
-                  selectedKeys={selectPlan}
-                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
+                  selectedKeys={selectPlan ? [selectPlan] : []}
+                  onSelectionChange={(e) =>
+                    setValue("selectPlan", e.currentKey as string)
+                  }
                 >
                   {plans.map((plan) => (
-                    <SelectItem key={plan.key}>
-                      {plan.label}
-                    </SelectItem>
+                    <SelectItem key={plan.key}>{plan.label}</SelectItem>
                   ))}
                 </Select>
 

@@ -4,7 +4,15 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { name_email, name, tempName } = await request.json();
+    const {
+      name_email,
+      name,
+      tempName,
+      organization,
+      tempOrganization,
+      selectPlan,
+      tempSelectPlan,
+    } = await request.json();
 
     // Define the directories
     const projectRoot = process.cwd();
@@ -12,8 +20,8 @@ export async function POST(request: Request) {
     const dataDir = path.join(parentDir, "data", "pics");
 
     // Build old and new folder paths
-    const oldFolderName = `[${name_email}] ${tempName}`;
-    const newFolderName = `[${name_email}] ${name}`;
+    const oldFolderName = `[${name_email}]_[${tempName}]_[${tempOrganization}]_[${tempSelectPlan}]`;
+    const newFolderName = `[${name_email}]_[${name}]_[${organization}]_[${selectPlan}]`;
     const oldFolderPath = path.join(dataDir, oldFolderName);
     const newFolderPath = path.join(dataDir, newFolderName);
 

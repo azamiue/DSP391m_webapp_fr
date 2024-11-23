@@ -63,7 +63,7 @@ export function InputValid() {
             <Input
               type="email"
               label="Email"
-              placeholder="Ex: example@gmail.com"
+              placeholder="E.g: example@gmail.com"
               className="w-[500px]"
               value={email}
               onChange={(e) => setValue("email", e.target.value)}
@@ -87,7 +87,7 @@ export function InputValid() {
             <Input
               type="email"
               label="Email"
-              placeholder="Ex: example@gmail.com"
+              placeholder="E.g: example@gmail.com"
               className="w-[350px]"
               value={email}
               onChange={(e) => setValue("email", e.target.value)}

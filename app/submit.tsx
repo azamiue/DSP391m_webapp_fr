@@ -5,10 +5,7 @@ import { Button } from "@nextui-org/button";
 import { convertNameEmail } from "@/config/name";
 import { useMediaQuery } from "react-responsive";
 import { reg } from "./api";
-import {
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import { clubs, plans } from "./data";
 
 export function Submit() {
@@ -23,6 +20,7 @@ export function Submit() {
   const tempName = useWatch({ control, name: "tempName" });
   const tempOrganization = useWatch({ control, name: "tempOrganization" });
   const selectPlan = useWatch({ control, name: "selectPlan" });
+  const tempSelectPlan = useWatch({ control, name: "tempSelectPlan" });
 
   const handleSubmit = async () => {
     try {
@@ -30,7 +28,11 @@ export function Submit() {
 
       const name_email = convertNameEmail(email);
 
-      if (tempName !== name) {
+      if (
+        tempName !== name ||
+        tempOrganization !== organization ||
+        tempSelectPlan !== selectPlan
+      ) {
         try {
           const response = await fetch("/api/rename-folder", {
             method: "POST",
@@ -41,6 +43,10 @@ export function Submit() {
               name_email: name_email,
               name: name,
               tempName: tempName,
+              organization: organization,
+              tempOrganization: tempOrganization,
+              selectPlan: selectPlan,
+              tempSelectPlan: tempSelectPlan,
             }),
           });
 
@@ -58,6 +64,8 @@ export function Submit() {
         body: JSON.stringify({
           name_email,
           name,
+          organization,
+          selectPlan,
         }),
       });
 
@@ -119,27 +127,25 @@ export function Submit() {
                 <Select
                   label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKeys={organization}
+                  selectedKeys={organization ? [organization] : []}
                   onSelectionChange={(e) =>
-                    setValue("organization", e as string)
+                    setValue("organization", e.currentKey as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <SelectItem key={club.key}>
-                      {club.label}
-                    </SelectItem>
+                    <SelectItem key={club.key}>{club.label}</SelectItem>
                   ))}
                 </Select>
 
                 <Select
                   label="Bạn muốn tham dự chương trình nào?"
-                  selectedKeys={selectPlan}
-                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
+                  selectedKeys={selectPlan ? [selectPlan] : []}
+                  onSelectionChange={(e) =>
+                    setValue("selectPlan", e.currentKey as string)
+                  }
                 >
                   {plans.map((plan) => (
-                    <SelectItem key={plan.key}>
-                      {plan.label}
-                    </SelectItem>
+                    <SelectItem key={plan.key}>{plan.label}</SelectItem>
                   ))}
                 </Select>
 
@@ -158,41 +164,39 @@ export function Submit() {
           <>
             <div className="flex flex-col gap-y-2">
               <div className="gap-y-2 p-4">
-                <h1 className="text-2xl">Vui lòng kiểm tra lại thông tin!</h1>              
+                <h1 className="text-2xl">Vui lòng kiểm tra lại thông tin!</h1>
               </div>
               <div className="w-[380px] h-[380px] flex flex-col gap-y-3 p-4">
                 <Input type="email" label="Email" value={email} disabled />
                 <Input
                   type="name"
                   label="Họ và Tên"
-                  placeholder="Ex: NGUYEN QUOC THAI"
+                  placeholder="E.g: NGUYEN VAN A"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
                 <Select
                   label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKeys={organization}
+                  selectedKeys={organization ? [organization] : []}
                   onSelectionChange={(e) =>
-                    setValue("organization", e as string)
+                    setValue("organization", e.currentKey as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <SelectItem key={club.key}>
-                      {club.label}
-                    </SelectItem>
+                    <SelectItem key={club.key}>{club.label}</SelectItem>
                   ))}
                 </Select>
 
                 <Select
                   label="Bạn muốn tham dự chương trình nào?"
-                  selectedKeys={selectPlan}
-                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
+                  selectedKeys={selectPlan ? [selectPlan] : []}
+                  onSelectionChange={(e) =>
+                    setValue("selectPlan", e.currentKey as string)
+                  }
                 >
                   {plans.map((plan) => (
-                    <SelectItem key={plan.key}>
-                      {plan.label}
-                    </SelectItem>
+                    <SelectItem key={plan.key}>{plan.label}</SelectItem>
                   ))}
                 </Select>
 
