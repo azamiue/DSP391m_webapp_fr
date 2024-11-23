@@ -22,6 +22,8 @@ export function Submit() {
   const selectPlan = useWatch({ control, name: "selectPlan" });
   const tempSelectPlan = useWatch({ control, name: "tempSelectPlan" });
 
+  const index = useWatch({ control, name: "index" });
+
   const handleSubmit = async () => {
     try {
       setValue("loading", true);
@@ -40,6 +42,7 @@ export function Submit() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              index: index,
               name_email: name_email,
               name: name,
               tempName: tempName,
@@ -62,6 +65,7 @@ export function Submit() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          index,
           name_email,
           name,
           organization,
@@ -204,6 +208,7 @@ export function Submit() {
                   color="primary"
                   isLoading={loading}
                   onClick={handleSubmit}
+                  isDisabled={loading}
                 >
                   {loading ? "Submiting..." : "Submit"}
                 </Button>

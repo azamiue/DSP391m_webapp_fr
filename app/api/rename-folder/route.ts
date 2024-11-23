@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const {
+      index,
       name_email,
       name,
       tempName,
@@ -20,8 +21,8 @@ export async function POST(request: Request) {
     const dataDir = path.join(parentDir, "data", "pics");
 
     // Build old and new folder paths
-    const oldFolderName = `[${name_email}]_[${tempName}]_[${tempOrganization}]_[${tempSelectPlan}]`;
-    const newFolderName = `[${name_email}]_[${name}]_[${organization}]_[${selectPlan}]`;
+    const oldFolderName = `[${index}]_[${name_email}]_[${tempName}]_[${tempOrganization}]_[${tempSelectPlan}]`;
+    const newFolderName = `[${index}]_[${name_email}]_[${name}]_[${organization}]_[${selectPlan}]`;
     const oldFolderPath = path.join(dataDir, oldFolderName);
     const newFolderPath = path.join(dataDir, newFolderName);
 

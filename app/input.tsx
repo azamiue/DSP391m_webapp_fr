@@ -11,6 +11,7 @@ export function InputValid() {
   const { control, setValue } = useFormContext<AuthenticatorSchema>();
   const loading = useWatch({ control, name: "loading" });
   const email = useWatch({ control, name: "email" });
+  const index = useWatch({ control, name: "index" });
 
   const handleClick = async () => {
     setValue("loading", true);
@@ -34,6 +35,10 @@ export function InputValid() {
 
       if (!data) {
         return;
+      }
+
+      if (data) {
+        setValue("index", data.idx);
       }
 
       if (data.status === true && data.reg === false) {

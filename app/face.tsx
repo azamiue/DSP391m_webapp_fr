@@ -51,6 +51,7 @@ export function FaceDetect() {
   const name = useWatch({ control, name: "name" });
   const organization = useWatch({ control, name: "organization" });
   const selectPlan = useWatch({ control, name: "selectPlan" });
+  const index = useWatch({ control, name: "index" });
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -244,6 +245,7 @@ export function FaceDetect() {
       formData.append("email", name_email);
       formData.append("organization", organization);
       formData.append("selectPlan", selectPlan);
+      formData.append("index", index);
 
       const response = await fetch("/api/save-image", {
         method: "POST",
@@ -444,7 +446,6 @@ export function FaceDetect() {
   }, [isModelsLoaded, isDone, isIOS]);
 
   const lookingForVietnamese = useMemo(() => {
-    console.log("lookingFor", lookingFor);
     if (lookingFor === "Left") {
       return "Trái";
     }
@@ -460,9 +461,6 @@ export function FaceDetect() {
 
     return "Thẳng";
   }, [lookingFor]);
-
-  console.log("lookingForVietnamese", lookingForVietnamese);
-
   return (
     <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
       <div className="flex flex-col gap-y-3">

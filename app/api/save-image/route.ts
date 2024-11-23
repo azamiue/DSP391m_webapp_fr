@@ -10,6 +10,7 @@ export async function POST(request: Request) {
     const email = formData.get("email") as string;
     const organization = formData.get("organization") as string;
     const selectPlan = formData.get("selectPlan") as string;
+    const index = formData.get("index") as string;
 
     if (!image || !name) {
       return NextResponse.json(
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     const picsDir = path.join(
       dataDir,
       "pics",
-      `[${email}]_[${name}]_[${organization}]_[${selectPlan}]`
+      `[${index}]_[${email}]_[${name}]_[${organization}]_[${selectPlan}]`
     );
     await mkdir(picsDir, { recursive: true }); // Create the directory if it doesn't exist
 
