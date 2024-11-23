@@ -12,7 +12,7 @@ import {
   Radio,
   RadioGroup,
 } from "@nextui-org/react";
-import { clubs } from "./data";
+import { clubs, plans } from "./data";
 
 export function InformationPage() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -103,20 +103,17 @@ export function InformationPage() {
                   ))}
                 </Autocomplete>
 
-                <RadioGroup
-                  value={selectPlan}
-                  onValueChange={(e) => setValue("selectPlan", e as string)}
+                <Autocomplete
+                  label="Select an Plan"
+                  selectedKey={selectPlan}
+                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
                 >
-                  <Radio key="le" value="le">
-                    Tham dự phần lễ{" "}
-                  </Radio>
-                  <Radio key="tiec" value="tiec">
-                    Tham dự phần tiệc (190k/người)
-                  </Radio>
-                  <Radio key="cahai" value="cahai">
-                    Cả hai
-                  </Radio>
-                </RadioGroup>
+                  {plans.map((plan) => (
+                    <AutocompleteItem key={plan.key}>
+                      {plan.label}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
 
                 <div className="text-sm">
                   Bằng cách ấn xác nhận, bạn đồng ý với{" "}
@@ -175,20 +172,31 @@ export function InformationPage() {
                   ))}
                 </Autocomplete>
 
-                <RadioGroup
-                  value={selectPlan}
-                  onValueChange={(e) => setValue("selectPlan", e as string)}
+                <Autocomplete
+                  label="Select an CLUB"
+                  className="w-full"
+                  selectedKey={organization}
+                  onSelectionChange={(e) =>
+                    setValue("organization", e as string)
+                  }
                 >
-                  <Radio key="le" value="le">
-                    Tham dự phần lễ{" "}
-                  </Radio>
-                  <Radio key="tiec" value="tiec">
-                    Tham dự phần tiệc (190k/người)
-                  </Radio>
-                  <Radio key="cahai" value="cahai">
-                    Cả hai
-                  </Radio>
-                </RadioGroup>
+                  {clubs.map((club) => (
+                    <AutocompleteItem key={club.key}>
+                      {club.label}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+
+                <Autocomplete
+                  selectedKey={selectPlan}
+                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
+                >
+                  {plans.map((plan) => (
+                    <AutocompleteItem key={plan.key}>
+                      {plan.label}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
 
                 <div className="text-sm">
                   Bằng cách ấn xác nhận, bạn đồng ý với{" "}
