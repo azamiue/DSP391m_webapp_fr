@@ -8,6 +8,8 @@ export async function POST(request: Request) {
     const image = formData.get("image") as File;
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
+    const organization = formData.get("organization") as string;
+    const selectPlan = formData.get("selectPlan") as string;
 
     if (!image || !name) {
       return NextResponse.json(
@@ -24,7 +26,11 @@ export async function POST(request: Request) {
     const parentDir = path.join(projectRoot, "..");
     const dataDir = path.join(parentDir, "data");
 
-    const picsDir = path.join(dataDir, "pics", `[${email}] ${name}`);
+    const picsDir = path.join(
+      dataDir,
+      "pics",
+      `[${email}]_[${name}]_[${organization}]_[${selectPlan}]`
+    );
     await mkdir(picsDir, { recursive: true }); // Create the directory if it doesn't exist
 
     // Save the file in the email-specific directory

@@ -17,6 +17,8 @@ export const authenSchema = z.object({
   isFinish: z.boolean(),
   tempName: z.string(),
   tempOrganization: z.string(),
+  selectPlan: z.string(),
+  tempSelectPlan: z.string(),
 });
 
 export type AuthenticatorSchema = z.infer<typeof authenSchema>;

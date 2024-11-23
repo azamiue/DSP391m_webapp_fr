@@ -49,6 +49,8 @@ export function FaceDetect() {
   const email = useWatch({ control, name: "email" });
   const isDone = useWatch({ control, name: "isDone" });
   const name = useWatch({ control, name: "name" });
+  const organization = useWatch({ control, name: "organization" });
+  const selectPlan = useWatch({ control, name: "selectPlan" });
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -240,6 +242,8 @@ export function FaceDetect() {
       formData.append("image", blob, `${direction}-${Date.now()}.jpg`);
       formData.append("name", name);
       formData.append("email", name_email);
+      formData.append("organization", organization);
+      formData.append("selectPlan", selectPlan);
 
       const response = await fetch("/api/save-image", {
         method: "POST",
@@ -439,6 +443,14 @@ export function FaceDetect() {
     };
   }, [isModelsLoaded, isDone, isIOS]);
 
+  const lookingForVietnamese = useMemo(() => {
+    if (lookingFor === "Straight") return "Thẳng";
+    if (lookingFor === "Left") return "Trái";
+    if (lookingFor == "Right") return "Phải";
+    if (lookingFor === "Up") return "Lên";
+    if (lookingFor === "Down") return "Xuống";
+  }, []);
+
   return (
     <div className="w-full max-w-4xl mx-auto" ref={containerRef}>
       <div className="flex flex-col gap-y-3">
@@ -448,13 +460,13 @@ export function FaceDetect() {
               isMobile ? "text-sm pt-3" : "text-2xl pt-3"
             } font-bold`}
           >
-            Look at the camera and follow the instructions
+            Nhìn vào camera và làm theo hướng dẫn
           </h2>
           {faceDirection === lookingFor ? (
-            <h1 className="text-xl text-green-500 font-bold">Stay Out!</h1>
+            <h1 className="text-xl text-green-500 font-bold">Giữ nguyên!</h1>
           ) : (
             <h1 className="text-xl text-red-500 font-bold">
-              Turn to: {lookingFor}
+              Hướng sang: {lookingForVietnamese}
             </h1>
           )}
         </div>
@@ -470,7 +482,15 @@ export function FaceDetect() {
                 />
               </div>
               <span className={`${isMobile ? "text-xs" : "text-sm"} mt-1`}>
-                {direction}
+                {
+                  {
+                    Straight: "Thẳng",
+                    Left: "Trái",
+                    Right: "Phải",
+                    Up: "Lên",
+                    Down: "Xuống",
+                  }[direction]
+                }
               </span>
             </div>
           ))}

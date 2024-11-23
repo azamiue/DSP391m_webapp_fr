@@ -13,7 +13,7 @@ import { InformationPage } from "./information";
 import { FaceDetect } from "./face";
 import { Submit } from "./submit";
 import { useMediaQuery } from "react-responsive";
-import Head from 'next/head'
+import Head from "next/head";
 
 export default function AuthenPage() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -56,7 +56,7 @@ export default function AuthenPage() {
 
   useEffect(() => {
     if (success && !isFinish && !isMobile) {
-      toast.success("Email is valid!", {
+      toast.success("Email hợp lệ!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
@@ -70,7 +70,7 @@ export default function AuthenPage() {
     }
 
     if (success && !isFinish && isMobile) {
-      toast.success("Email is valid!", {
+      toast.success("Email hợp lệ!", {
         className: "w-[300px] mx-auto mt-2",
         position: "top-center",
         autoClose: 2000,
@@ -85,7 +85,7 @@ export default function AuthenPage() {
     }
 
     if (isFinish && !isMobile) {
-      toast.success("Your Information Send Successfully", {
+      toast.success("Thông tin của bạn đã được gửi thành công!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
@@ -99,7 +99,7 @@ export default function AuthenPage() {
     }
 
     if (isFinish && isMobile) {
-      toast.success("Your Information Send Successfully", {
+      toast.success("Thông tin của bạn đã được gửi thành công!", {
         className: "w-[300px] mx-auto mt-2",
         position: "top-center",
         autoClose: 2000,
@@ -113,7 +113,7 @@ export default function AuthenPage() {
     }
 
     if (alreadyReg && !isMobile) {
-      toast.warn("Your email has been registered!", {
+      toast.warn("Email của bạn đã được đăng ký!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
@@ -128,7 +128,7 @@ export default function AuthenPage() {
     }
 
     if (alreadyReg && isMobile) {
-      toast.warn("Your email has been registered!", {
+      toast.warn("Email của bạn đã được đăng ký!", {
         className: "w-[300px] mx-auto mt-2",
         position: "top-center",
         autoClose: 2000,
@@ -143,7 +143,7 @@ export default function AuthenPage() {
     }
 
     if (fail && !isMobile) {
-      toast.error("Email is invalid!", {
+      toast.error("Email không hợp lệ!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
@@ -158,7 +158,7 @@ export default function AuthenPage() {
     }
 
     if (fail && isMobile) {
-      toast.error("Email is invalid!", {
+      toast.error("Email không hợp lệ!", {
         className: "w-[300px] mx-auto mt-2",
         position: "top-center",
         autoClose: 2000,
@@ -185,11 +185,11 @@ export default function AuthenPage() {
                 <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
                   <div className="inline-block max-w-xl text-center justify-center">
                     <div className={title({ color: "violet", size: "sm" })}>
-                      Authentication&nbsp;
+                      Đăng kí tham gia sự kiện&nbsp;
                     </div>
                   </div>
                   <h1 className="text-sm font-semibold">
-                  Eligibility check: enter your email you have received an invitation from FPTU AI CLUB.
+                    Nhập email bạn đã nhận được thư mời của FPTU AI CLUB
                   </h1>
                   <FormProvider {...methods}>
                     <InputValid />
@@ -224,8 +224,8 @@ export default function AuthenPage() {
             <div className="text-[30px] flex justify-center items-center flex-col border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
               <p>Thanks {name}</p>
               <p className="text-[25px]">
-                Welcome to "RETRO NIGHT VI: Legacy of Flames". FAIC with love
-                for you!
+                Chào mừng bạn đến với "RETRO NIGHT VI: Legacy of Flames". Chúc
+                bạn có một buổi tối đáng nhớ cùng FAIC.
               </p>
             </div>
           )}
@@ -244,10 +244,10 @@ export default function AuthenPage() {
                         size: "sm",
                       })}
                     >
-                      Authentication&nbsp;
+                      ĐĂNG KÍ SỰ KIỆN&nbsp;
                     </div>
-                    <h1 className="text-sm font-semibold text-center w-[350px]">
-                    Eligibility check: enter your email you have received an invitation from FPTU AI CLUB.
+                    <h1 className="text-[12px] font-semibold text-center w-[350px]">
+                      Nhập email bạn đã nhận được thư mời của FPTU AI CLUB
                     </h1>
                     <FormProvider {...methods}>
                       <InputValid />
@@ -285,8 +285,8 @@ export default function AuthenPage() {
             <div className="text-xl flex flex-col border-1 border-transparent p-10 rounded-2xl backdrop-blur-3xl bg-white/20">
               <p className="text-center">Thanks {name}</p>
               <p className="text-[15px] text-center">
-                Welcome to "RETRO NIGHT VI: Legacy of Flames". FAIC with love
-                for you!
+                Chào mừng bạn đến với "RETRO NIGHT VI: Legacy of Flames". Chúc
+                bạn có một buổi tối đáng nhớ cùng FAIC.
               </p>
             </div>
           )}

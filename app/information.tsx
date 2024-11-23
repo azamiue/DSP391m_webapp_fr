@@ -6,6 +6,13 @@ import { Button } from "@nextui-org/button";
 import { useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
 import Link from "next/link";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Radio,
+  RadioGroup,
+} from "@nextui-org/react";
+import { clubs } from "./data";
 
 export function InformationPage() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -16,11 +23,13 @@ export function InformationPage() {
   const loading = useWatch({ control, name: "loading" });
   const name = useWatch({ control, name: "name" });
   const organization = useWatch({ control, name: "organization" });
+  const selectPlan = useWatch({ control, name: "selectPlan" });
 
   const handleSubmit = async () => {
     setValue("loading", true);
     setValue("tempName", name);
     setValue("tempOrganization", organization);
+    setValue("tempSelectPlan", selectPlan);
 
     try {
       // Request camera access
@@ -59,36 +68,66 @@ export function InformationPage() {
           <>
             <div className="flex flex-col gap-y-10">
               <div className="gap-y-2">
-                <h1 className="text-2xl">Enter Basic Information</h1>
-                <h2 className="text-sm">Please fill out this form!</h2>
+                <h1 className="text-2xl">Thông tin cá nhân</h1>
+                <h2 className="text-sm">Vui lòng điền vào mẫu này!</h2>
               </div>
               <div className="w-[500px] h-[500px] flex flex-col gap-y-3">
                 <Input type="email" label="Email" value={email} disabled />
                 <Input
                   type="name"
-                  label="Full Name"
+                  label="Họ và Tên"
                   placeholder="Ex: NGUYEN QUOC THAI"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
-                <Input
+                {/* <Input
                   type="name"
-                  label="Your Orgnization"
+                  label="CLB của bạn"
                   placeholder="Ex: AI CLUB"
                   className="mb-3"
                   value={organization}
                   onChange={(e) => setValue("organization", e.target.value)}
-                />
+                /> */}
+                <Autocomplete
+                  label="Select an CLUB"
+                  className="w-full"
+                  selectedKey={organization}
+                  onSelectionChange={(e) =>
+                    setValue("organization", e as string)
+                  }
+                >
+                  {clubs.map((club) => (
+                    <AutocompleteItem key={club.key}>
+                      {club.label}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+
+                <RadioGroup
+                  value={selectPlan}
+                  onValueChange={(e) => setValue("selectPlan", e as string)}
+                >
+                  <Radio key="le" value="le">
+                    Tham dự phần lễ{" "}
+                  </Radio>
+                  <Radio key="tiec" value="tiec">
+                    Tham dự phần tiệc (190k/người)
+                  </Radio>
+                  <Radio key="cahai" value="cahai">
+                    Cả hai
+                  </Radio>
+                </RadioGroup>
 
                 <div className="text-sm">
-                  By submiting you agree to the{" "}
+                  Bằng cách ấn xác nhận, bạn đồng ý với{" "}
                   <Link
                     href={"https://fptuaiclub.me/policy"}
                     target="_blank"
                     className="underline cursor-pointer"
                   >
-                    Privacy policy
-                  </Link>
+                    Chính sách bảo mật
+                  </Link>{" "}
+                  của chúng tôi.
                 </div>
 
                 <Button
@@ -97,7 +136,9 @@ export function InformationPage() {
                   onClick={handleSubmit}
                   isDisabled={handleDisable}
                 >
-                  {loading ? "Allow to access your camera!" : "Submit"}
+                  {loading
+                    ? "Cho phép truy cập vào máy ảnh của bạn!"
+                    : "Xác Nhận"}
                 </Button>
               </div>
             </div>
@@ -107,36 +148,58 @@ export function InformationPage() {
           <>
             <div className="flex flex-col gap-y-2">
               <div className="gap-y-2 p-4">
-                <h1 className="text-2xl">Enter Basic Information</h1>
-                <h2 className="text-sm">Please fill out this form!</h2>
+                <h1 className="text-2xl">Thông tin cá nhân</h1>
+                <h2 className="text-sm">Vui lòng điền vào mẫu này!</h2>
               </div>
-              <div className="w-[380px] h-[380px] flex flex-col gap-y-3 p-4">
+              <div className="w-[380px] h-[450px] flex flex-col gap-y-3 p-4">
                 <Input type="email" label="Email" value={email} disabled />
                 <Input
                   type="name"
-                  label="Full Name"
+                  label="Họ và Tên"
                   placeholder="Ex: NGUYEN QUOC THAI"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
-                <Input
-                  type="name"
-                  label="Your Orgnization"
-                  placeholder="Ex: AI CLUB"
-                  className="mb-3"
-                  value={organization}
-                  onChange={(e) => setValue("organization", e.target.value)}
-                />
+                <Autocomplete
+                  label="Select an CLUB"
+                  className="w-full"
+                  selectedKey={organization}
+                  onSelectionChange={(e) =>
+                    setValue("organization", e as string)
+                  }
+                >
+                  {clubs.map((club) => (
+                    <AutocompleteItem key={club.key}>
+                      {club.label}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+
+                <RadioGroup
+                  value={selectPlan}
+                  onValueChange={(e) => setValue("selectPlan", e as string)}
+                >
+                  <Radio key="le" value="le">
+                    Tham dự phần lễ{" "}
+                  </Radio>
+                  <Radio key="tiec" value="tiec">
+                    Tham dự phần tiệc (190k/người)
+                  </Radio>
+                  <Radio key="cahai" value="cahai">
+                    Cả hai
+                  </Radio>
+                </RadioGroup>
 
                 <div className="text-sm">
-                  By submiting you agree to the{" "}
+                  Bằng cách ấn xác nhận, bạn đồng ý với{" "}
                   <Link
                     href={"https://fptuaiclub.me/policy"}
                     target="_blank"
                     className="underline cursor-pointer"
                   >
-                    Privacy policy
-                  </Link>
+                    Chính sách bảo mật
+                  </Link>{" "}
+                  của chúng tôi.
                 </div>
 
                 <Button
@@ -145,7 +208,9 @@ export function InformationPage() {
                   onClick={handleSubmit}
                   isDisabled={handleDisable}
                 >
-                  {loading ? "Allow to access your camera!" : "Submit"}
+                  {loading
+                    ? "Cho phép truy cập vào máy ảnh của bạn!"
+                    : "Xác Nhận"}
                 </Button>
               </div>
             </div>
