@@ -444,11 +444,17 @@ export function FaceDetect() {
   }, [isModelsLoaded, isDone, isIOS]);
 
   const lookingForVietnamese = useMemo(() => {
-    if (lookingFor === "Straight") return "Thẳng";
-    if (lookingFor === "Left") return "Trái";
-    if (lookingFor == "Right") return "Phải";
-    if (lookingFor === "Up") return "Lên";
-    if (lookingFor === "Down") return "Xuống";
+    if (lookingFor === "Straight") {
+      return "Thẳng";
+    } else if (lookingFor === "Left") {
+      return "Trái";
+    } else if (lookingFor === "Right") {
+      return "Phải";
+    } else if (lookingFor === "Up") {
+      return "Lên";
+    } else if (lookingFor === "Down") {
+      return "Xuống";
+    }
   }, []);
 
   return (
@@ -460,7 +466,7 @@ export function FaceDetect() {
               isMobile ? "text-sm pt-3" : "text-2xl pt-3"
             } font-bold`}
           >
-            Nhìn vào camera và làm theo hướng dẫn
+            Hãy nhìn vào camera và làm theo hướng dẫn
           </h2>
           {faceDirection === lookingFor ? (
             <h1 className="text-xl text-green-500 font-bold">Giữ nguyên!</h1>

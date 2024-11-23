@@ -6,12 +6,10 @@ import { convertNameEmail } from "@/config/name";
 import { useMediaQuery } from "react-responsive";
 import { reg } from "./api";
 import {
-  Autocomplete,
-  AutocompleteItem,
-  Radio,
-  RadioGroup,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
-import { clubs } from "./data";
+import { clubs, plans } from "./data";
 
 export function Submit() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -107,47 +105,43 @@ export function Submit() {
           <>
             <div className="flex flex-col gap-y-10">
               <div className="gap-y-2">
-                <h1 className="text-2xl">Kiểm tra lại thông tin!</h1>
-                <h2 className="text-sm">Vui lòng điền vào mẫu này!</h2>
+                <h1 className="text-2xl">Vui lòng kiểm tra lại thông tin!</h1>
               </div>
               <div className="w-[500px] h-[500px] flex flex-col gap-y-3">
                 <Input type="email" label="Email" value={email} disabled />
                 <Input
                   type="name"
                   label="Họ và Tên"
-                  placeholder="Ex: NGUYEN QUOC THAI"
+                  placeholder="E.g: NGUYEN VAN A"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
-                <Autocomplete
-                  label="Select an CLUB"
+                <Select
+                  label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKey={organization}
+                  selectedKeys={organization}
                   onSelectionChange={(e) =>
                     setValue("organization", e as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <AutocompleteItem key={club.key}>
+                    <SelectItem key={club.key}>
                       {club.label}
-                    </AutocompleteItem>
+                    </SelectItem>
                   ))}
-                </Autocomplete>
+                </Select>
 
-                <RadioGroup
-                  value={selectPlan}
-                  onValueChange={(e) => setValue("selectPlan", e as string)}
+                <Select
+                  label="Bạn muốn tham dự chương trình nào?"
+                  selectedKeys={selectPlan}
+                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
                 >
-                  <Radio key="le" value="le">
-                    Tham dự phần lễ{" "}
-                  </Radio>
-                  <Radio key="tiec" value="tiec">
-                    Tham dự phần tiệc (190k/người)
-                  </Radio>
-                  <Radio key="cahai" value="cahai">
-                    Cả hai
-                  </Radio>
-                </RadioGroup>
+                  {plans.map((plan) => (
+                    <SelectItem key={plan.key}>
+                      {plan.label}
+                    </SelectItem>
+                  ))}
+                </Select>
 
                 <Button
                   color="primary"
@@ -164,8 +158,7 @@ export function Submit() {
           <>
             <div className="flex flex-col gap-y-2">
               <div className="gap-y-2 p-4">
-                <h1 className="text-2xl">Kiểm tra lại thông tin!</h1>
-                <h2 className="text-sm">Vui lòng điền vào mẫu này!</h2>
+                <h1 className="text-2xl">Vui lòng kiểm tra lại thông tin!</h1>              
               </div>
               <div className="w-[380px] h-[380px] flex flex-col gap-y-3 p-4">
                 <Input type="email" label="Email" value={email} disabled />
@@ -176,35 +169,32 @@ export function Submit() {
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
-                <Autocomplete
-                  label="Select an CLUB"
+                <Select
+                  label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKey={organization}
+                  selectedKeys={organization}
                   onSelectionChange={(e) =>
                     setValue("organization", e as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <AutocompleteItem key={club.key}>
+                    <SelectItem key={club.key}>
                       {club.label}
-                    </AutocompleteItem>
+                    </SelectItem>
                   ))}
-                </Autocomplete>
+                </Select>
 
-                <RadioGroup
-                  value={selectPlan}
-                  onValueChange={(e) => setValue("selectPlan", e as string)}
+                <Select
+                  label="Bạn muốn tham dự chương trình nào?"
+                  selectedKeys={selectPlan}
+                  onSelectionChange={(e) => setValue("selectPlan", e as string)}
                 >
-                  <Radio key="le" value="le">
-                    Tham dự phần lễ{" "}
-                  </Radio>
-                  <Radio key="tiec" value="tiec">
-                    Tham dự phần tiệc (190k/người)
-                  </Radio>
-                  <Radio key="cahai" value="cahai">
-                    Cả hai
-                  </Radio>
-                </RadioGroup>
+                  {plans.map((plan) => (
+                    <SelectItem key={plan.key}>
+                      {plan.label}
+                    </SelectItem>
+                  ))}
+                </Select>
 
                 <Button
                   color="primary"

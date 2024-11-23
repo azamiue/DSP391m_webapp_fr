@@ -7,10 +7,8 @@ import { useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
 import Link from "next/link";
 import {
-  Autocomplete,
-  AutocompleteItem,
-  Radio,
-  RadioGroup,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { clubs, plans } from "./data";
 
@@ -24,6 +22,8 @@ export function InformationPage() {
   const name = useWatch({ control, name: "name" });
   const organization = useWatch({ control, name: "organization" });
   const selectPlan = useWatch({ control, name: "selectPlan" });
+
+  console.log("selectPlan", selectPlan)
 
   const handleSubmit = async () => {
     setValue("loading", true);
@@ -53,12 +53,12 @@ export function InformationPage() {
       return true;
     }
 
-    if (!name || !organization) {
+    if (!name || !organization || !selectPlan) {
       return true;
     }
 
     return false;
-  }, [name, organization]);
+  }, [name, organization, selectPlan]);
 
   return (
     <>
@@ -76,7 +76,7 @@ export function InformationPage() {
                 <Input
                   type="name"
                   label="Họ và Tên"
-                  placeholder="Ex: NGUYEN QUOC THAI"
+                  placeholder="Ex: NGUYEN VAN A"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
@@ -88,32 +88,32 @@ export function InformationPage() {
                   value={organization}
                   onChange={(e) => setValue("organization", e.target.value)}
                 /> */}
-                <Autocomplete
-                  label="Select an CLUB"
+                <Select
+                  label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKey={organization}
+                  selectedKeys={organization}
                   onSelectionChange={(e) =>
                     setValue("organization", e as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <AutocompleteItem key={club.key}>
+                    <SelectItem key={club.key}>
                       {club.label}
-                    </AutocompleteItem>
+                    </SelectItem>
                   ))}
-                </Autocomplete>
+                </Select>
 
-                <Autocomplete
-                  label="Select an Plan"
-                  selectedKey={selectPlan}
+                <Select
+                  label="Bạn muốn tham dự chương trình nào?"
+                  selectedKeys={selectPlan}
                   onSelectionChange={(e) => setValue("selectPlan", e as string)}
                 >
                   {plans.map((plan) => (
-                    <AutocompleteItem key={plan.key}>
+                    <SelectItem key={plan.key}>
                       {plan.label}
-                    </AutocompleteItem>
+                    </SelectItem>
                   ))}
-                </Autocomplete>
+                </Select>
 
                 <div className="text-sm">
                   Bằng cách ấn xác nhận, bạn đồng ý với{" "}
@@ -153,50 +153,36 @@ export function InformationPage() {
                 <Input
                   type="name"
                   label="Họ và Tên"
-                  placeholder="Ex: NGUYEN QUOC THAI"
+                  placeholder="Ex: NGUYEN VAN A"
                   value={name}
                   onChange={(e) => setValue("name", e.target.value)}
                 />
-                <Autocomplete
-                  label="Select an CLUB"
+                <Select
+                  label="Bạn đến từ CLB nào?"
                   className="w-full"
-                  selectedKey={organization}
+                  selectedKeys={organization}
                   onSelectionChange={(e) =>
                     setValue("organization", e as string)
                   }
                 >
                   {clubs.map((club) => (
-                    <AutocompleteItem key={club.key}>
+                    <SelectItem key={club.key}>
                       {club.label}
-                    </AutocompleteItem>
+                    </SelectItem>
                   ))}
-                </Autocomplete>
+                </Select>
 
-                <Autocomplete
-                  label="Select an CLUB"
-                  className="w-full"
-                  selectedKey={organization}
-                  onSelectionChange={(e) =>
-                    setValue("organization", e as string)
-                  }
-                >
-                  {clubs.map((club) => (
-                    <AutocompleteItem key={club.key}>
-                      {club.label}
-                    </AutocompleteItem>
-                  ))}
-                </Autocomplete>
-
-                <Autocomplete
-                  selectedKey={selectPlan}
+                <Select
+                  label="Bạn muốn tham dự chương trình nào?"
+                  selectedKeys={selectPlan}
                   onSelectionChange={(e) => setValue("selectPlan", e as string)}
                 >
                   {plans.map((plan) => (
-                    <AutocompleteItem key={plan.key}>
+                    <SelectItem key={plan.key}>
                       {plan.label}
-                    </AutocompleteItem>
+                    </SelectItem>
                   ))}
-                </Autocomplete>
+                </Select>
 
                 <div className="text-sm">
                   Bằng cách ấn xác nhận, bạn đồng ý với{" "}
