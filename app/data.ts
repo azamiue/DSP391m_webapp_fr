@@ -18,6 +18,7 @@ export const clubs = [
   { key: "FUB", label: "FPTU Basketball Club" },
   { key: "FBGC", label: "FPTU Board Game Club" },
   { key: "BUK", label: "FPTU Book Club" },
+  { key: "FBC", label: "FPTU Business Club" },
   { key: "Chess", label: "FPTU Chess Club" },
   { key: "FCOC", label: "FPTU Cóc Gia Đường Club" },
   { key: "FPTU Dango Club", label: "FPTU Dango Club" },

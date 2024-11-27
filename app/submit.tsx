@@ -4,7 +4,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { convertNameEmail } from "@/config/name";
 import { useMediaQuery } from "react-responsive";
-import { reg } from "./api";
+import { reg, status } from "./api";
 import { Select, SelectItem } from "@nextui-org/react";
 import { clubs, plans } from "./data";
 
@@ -96,6 +96,24 @@ export function Submit() {
           headers: {
             "Content-Type": "application/json",
           },
+        });
+
+        if (!response.ok) {
+          throw new Error("API request failed");
+        }
+
+        const data = await response.json();
+      } catch (error) {
+        console.error("Request failed:", error);
+      }
+
+      try {
+        // Make the API request using fetch
+        const response = await fetch(`${status}${index}?status=${selectPlan}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          }
         });
 
         if (!response.ok) {
